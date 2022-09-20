@@ -9,5 +9,4 @@ public class EasyfeedbackApplication {
     public static void main(String[] args) {
         SpringApplication.run(EasyfeedbackApplication.class, args);
     }
-
 }

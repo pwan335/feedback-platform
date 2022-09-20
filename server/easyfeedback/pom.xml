@@ -8,7 +8,7 @@
         <version>2.7.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.project</groupId>
+    <groupId>com.elec5619</groupId>
     <artifactId>easyfeedback</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>easyfeedback</name>
@@ -43,6 +43,7 @@
             <artifactId>druid</artifactId>
             <version>1.1.16</version>
         </dependency>
+
     </dependencies>
 
     <build>
