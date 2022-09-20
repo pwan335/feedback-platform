@@ -17,6 +17,16 @@ export const constantRoutes = [
         hidden: true
     },
     {
+        path: '/user-info',
+        component: resolve => require(['@/views/user-info/UserInfo.vue'], resolve),
+        hidden: true
+    },
+    {
+        path: '/details',
+        component: resolve => require(['@/views/topic-details/TopicDetails.vue'], resolve),
+        hidden: true
+    },
+    {
         path: '/401',
         component: resolve => require(['@/views/error-page/401.vue'], resolve),
         hidden: true
@@ -34,7 +44,7 @@ Router.prototype.push = function push(location){
 }
 
 const createRouter = () => new Router({
-    // mode: 'history',
+    mode: 'history',
     scrollBehavior: () => ({ y: 0 }),
     routes: constantRoutes
 })

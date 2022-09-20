@@ -5,6 +5,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   publicPath: "/",
   devServer: {
+    hot: true,
     proxy: {
       "/api": {
         target: "http://localhost:8090", // 需要代理访问的api地址

@@ -4,8 +4,8 @@
       <div class="item-list">
         <span :class="['item', activetedIndex==1?'item-activated':'']" @click="showForm(1)">Edit Profile</span>
         <span :class="['item', activetedIndex==2?'item-activated':'']" @click="showForm(2)">Change Password</span>
-        <span :class="['item', activetedIndex==3?'item-activated':'']" @click="showForm(3)">Manage Listings</span>
-        <span :class="['item', activetedIndex==4?'item-activated':'']" @click="showForm(4)">View Comments</span>
+        <span :class="['item', activetedIndex==3?'item-activated':'']" @click="showForm(3)">Manage Page</span>
+        <span :class="['item', activetedIndex==4?'item-activated':'']" @click="showForm(4)">Topic Edition</span>
         <div class="signOut_btn">
           <el-button type="danger" size="small" plain @click="signOut">Sign-out</el-button>
         </div>
@@ -53,12 +53,8 @@ export default {
     const user = sessionStorage.getItem('user')
     if(!user) {
       this.$message.warning('Please log in first')
-      // record the page to return after successful login
-      let queryData = {
-        path: 'profile',
-      }
-      sessionStorage.setItem('querydata', JSON.stringify(queryData))
-      this.$emit('switchTab',2);
+      // 返回登录页, 登录成功后返回首页
+      // todo
     }
   },
   methods:{
@@ -87,11 +83,12 @@ export default {
       }
     },
     signOut(){
-      this.$emit('signOut')
+      // 退出登录，返回首页
+      this.$router.go(-1)
     },
 
     updateUser(){
-      this.$emit('updateUser')
+      // 更新用户信息
     }
   }
 }

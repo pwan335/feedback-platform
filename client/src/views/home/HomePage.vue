@@ -1,219 +1,340 @@
 <template>
   <div class="container">
-    <div class="header">
-      <div class="navigation">
-        <div class="userinfo">
-<!--          <span class="el-icon-s-custom avatar"></span>-->
-          <span>{{userName}}</span>
+    <div class="navigation">
+      <el-image class="navigation-bg" :src="require('../../assets/home_images/bg.jpg')" />
+    </div>
+    <div class="second-part">
+      <div class="search-topic">
+        <div class="search-title">Search Topic</div>
+        <div class="search-line">
+          <el-input v-model="topicName" />
+          <el-button type="primary">Search</el-button>
         </div>
-        <div class="menus">
-          <span :class="['menu-item', activateIndex==0?'menu-item-activated':'']" @click="handleClick(0)">MainPage</span>
-          <span :class="['menu-item', activateIndex==1?'menu-item-activated':'']" v-if="logged"  @click="handleClick(1)">Sign-out</span>
-          <span :class="['menu-item', activateIndex==2?'menu-item-activated':'']" v-else  @click="handleClick(2)">Sign-in</span>
-          <span :class="['menu-item', activateIndex==3?'menu-item-activated':'']"  @click="handleClick(3)">ChekOut</span>
-          <span :class="['menu-item', activateIndex==4?'menu-item-activated':'']"  @click="handleClick(4)">Profile</span>
+        <div class="recommend-topics">
+          <div v-for="(item, index) in recommendTopics" :key="index" class="recommend-item">{{item.name}}</div>
         </div>
       </div>
-      <div class="sub-title" v-show="activateIndex!==0">SellPhone</div>
-      <div class="filter-bar" v-show="activateIndex===0">
-        <div class="title">SellPhone</div>
-        <div class="search-field">
-          <el-input
-              placeholder="Search Phone"
-              prefix-icon="el-icon-search"
-              v-model="keyWords">
-          </el-input>
-          <el-button @click="startSearch" type="primary" class="search-btn">Search</el-button>
+      <div class="user-info">
+        <div v-if="!isLogin">
+          <div class="login-tips">Login to find more...</div>
+          <el-button @click="handleLogin">click here</el-button>
+        </div>
+        <div v-else style="position:relative;">
+          <el-button class="edit-btn" type="text" @click="userCenter">user center</el-button>
+          <div>
+            <el-image :src="require(`../../assets/home_images/${userInfo.avatar}.png`)" class="avatar" />
+          </div>
+          <div class="user-name">{{userInfo.userName}}</div>
+          <div class="statistic">
+            <div class="collection">
+              <el-image :src="require('../../assets/home_images/collection.png')" class="icon" />
+              <div>{{userInfo.collections}}</div>
+            </div>
+            <div class="comment">
+              <el-image :src="require('../../assets/home_images/comment.png')" class="icon" />
+              <div>{{userInfo.comments}}</div>
+            </div>
+            <div class="like">
+              <el-image :src="require('../../assets/home_images/like.png')" class="icon" />
+              <div>{{userInfo.like}}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="content">
-      <main-page v-if="activateIndex===0" ref="mainpage" @switchTab="switchTabs" :key-word="keyWords" />
-      <login-page v-else-if="activateIndex===2" @switchTab="switchTabs" @login="login" />
-      <user-info v-else-if="activateIndex===4" @switchTab="switchTabs" @signOut="signOut" @updateUser="updateUser" />
-      <check-out v-else-if="activateIndex===3" @switchTab="switchTabs" />
+    <div class="third-part">
+      <div class="topic-docker">
+        <div class="top-btn" v-show="isLogin">
+          <el-button type="primary" size="mini">Recommend</el-button>
+          <el-button type="primary" size="mini">My Comments</el-button>
+          <el-button type="primary" size="mini">My Star</el-button>
+        </div>
+        <div class="topic-item" v-for="(item, index) in topicInfo" :key="index">
+          <div class="line1">
+            <el-image :src="require(`../../assets/home_images/${item.avatar}.png`)" class="icon"  />
+            <div class="topic-des">
+              <div>{{item.userName}}</div>
+              <div>{{item.time}}</div>
+            </div>
+          </div>
+          <div @click="toDetails(item)">
+            <div class="topic-title">{{item.title}}</div>
+            <div class="topic-content">{{item.describe}}</div>
+          </div>
+          <div>
+            <el-image :src="require('../../assets/home_images/collection.png')" class="comment-icon" />
+            <span>
+              <el-image :src="require('../../assets/home_images/comment.png')" class="comment-icon" />
+              <span>80</span>
+            </span>
+            <span>
+              <el-image :src="require('../../assets/home_images/like.png')" class="comment-icon" />
+              <span>191</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="hot-topics">
+        <div class="hot-topic-title">Hot topics</div>
+        <div v-for="(item, index) in hotTopics" :key="index" class="hot-topic-item">
+         {{index+1}}. {{item.title}}
+        </div>
+      </div>
     </div>
+    <login-page v-model="showLogin" @loginSuccess="loginSuccess" />
   </div>
 </template>
 
 <script>
-import MainPage from "@/views/main-page/MainPage";
-import LoginPage from "@/views/login/LoginPage";
-import UserInfo from "@/views/user-info/UserInfo";
-import CheckOut from "@/views/check-out/Checkout";
+import LoginPage from "./components/LoginPage";
 export default {
   name: "HomePage",
-  components: {MainPage, CheckOut, UserInfo, LoginPage},
+  components: {
+    LoginPage
+  },
   data() {
     return {
-      userName: '',
-      // activated menu
-      activateIndex: 0,
-      preactiveIndex: 0,
-      // login status
-      logged: false,
-      keyWords: ''
+      isLogin: false,
+      showLogin: false,
+      topicName: '',
+      recommendTopics: [
+          { id: 1, name: 'Google Maps, AR wayfindingGoogle Maps, AR wayfindingGoogle Maps, AR wayfinding' },
+          { id: 1, name: 'Google Maps, AR wayfinding' },
+          { id: 1, name: 'Google Maps, AR wayfinding' },
+          { id: 1, name: 'Google Maps, AR wayfinding' },
+          { id: 1, name: 'Google Maps, AR wayfinding' },
+          { id: 1, name: 'Google Maps, AR wayfinding' }
+      ],
+      userInfo:{
+        avatar: 'man',
+        userName: 'Alex',
+        collections: 10,
+        comments: 20,
+        like: 3
+      },
+      topicInfo: [
+        {
+          userName: 'Alex',
+          avatar: 'woman',
+          title: 'Title Title Title Title Title Title Title Title',
+          time: '2022-09-12',
+          describe: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.'
+        },
+        {
+          userName: 'Bob',
+          avatar: 'man',
+          title: 'Title Title Title Title Title Title Title Title',
+          time: '2022-09-12',
+          describe: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.'
+        },
+        {
+          userName: 'Lisa',
+          avatar: 'woman',
+          title: 'Title Title Title Title Title Title Title Title',
+          time: '2022-09-12',
+          describe: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.'
+        },
+        {
+          userName: 'petter',
+          avatar: 'man',
+          title: 'Title Title Title Title Title Title Title Title',
+          time: '2022-09-12',
+          describe: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.'
+        }
+      ],
+
+      hotTopics: [
+        { id: 1, title: 'topic1' },
+        { id: 2, title: 'topic2' },
+        { id: 3, title: 'topic3' },
+        { id: 4, title: 'topic4' },
+        { id: 5, title: 'topic5' },
+        { id: 6, title: 'topic6' },
+        { id: 7, title: 'topic7' },
+        { id: 8, title: 'topic8' },
+      ]
     }
   },
   created() {
-    const user = sessionStorage.getItem('user')
-    if(user) {
-      this.logged = true
-      this.userName = JSON.parse(user).firstname
-    }
 
-    // jump to the login page after resetting password
-    const queryInfo = this.$route.params
-    if(queryInfo && queryInfo.resetPassword) {
-      this.activateIndex = 2
-
-    }
   },
   methods: {
-    updateUser() {
-      const user = sessionStorage.getItem('user')
-      if(user) {
-        this.userName = JSON.parse(user).firstname
-      }
+    handleLogin() {
+      this.showLogin = true
     },
-    //
-    handleClick(cmd) {
-      if(cmd === 3) {
-        // record the data to be returned to the details page
-        if( this.$refs['mainpage'] && this.$refs['mainpage'].$data.status === 'details' ) {
-          this.$refs['mainpage'].setBackInfo()
-        }
-      }
-      if(cmd!==1) {
-        this.preactiveIndex = this.activateIndex
-        this.activateIndex = cmd
-      } else if(cmd === 1) {
-        // sign out
-        this.signOut()
-      }
-      // initialization date
-      this.keyWords = ''
+    userCenter() {
+      this.$router.push('user-info')
+    },
+    loginSuccess() {
+      this.isLogin = true
+      // get userInfo
+      // todo
     },
 
-    // switch page
-    switchTabs(index) {
-      // go back to the last page
-      if(index === -1) {
-        this.activateIndex = this.preactiveIndex
-      } else {
-        this.activateIndex = index
-      }
-    },
-
-    // filter data
-    startSearch() {
-        this.$refs['mainpage'].filterData()
-    },
-
-    // handle login
-    login(user) {
-      if(user) {
-        this.logged = true
-        this.userName = user.firstname
-        this.switchTabs(0)
-      } else {
-        this.logged = false
-      }
-    },
-
-    signOut() {
-      this.$confirm('Do you want to log out?', 'Warning', {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }).then(() => {
-        this.logged = false
-        this.userName = ''
-        this.activateIndex = 0;
-        sessionStorage.clear()
-        this.$message({
-          type: 'success',
-          message: 'Log out successfully'
-        });
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: 'Log out canceled'
-        });
-      });
+    toDetails(item) {
+      this.$router.push('details')
     }
   }
 }
 </script>
 
 <style scoped>
-.header{
-  padding: 20px;
-  /*background: linear-gradient(to bottom, #6CC6CB, #EAE5C9);*/
-  background: linear-gradient(to bottom, rgba(153, 184, 248, 0.99), #ffffff);
+.navigation-bg{
+  width: 100%;
 }
-.navigation{
+.second-part{
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
 }
-.userinfo{
-  float: right;
-  height: 50px;
-  line-height: 50px;
-  font-size: 26px;
+.search-topic{
+  box-sizing: border-box;
+  width: 69%;
+  height: 280px;
+  padding: 20px 40px;
+  background-color: #FFF;
+}
+.search-title{
+  font-size: 24px;
+  font-weight: 600;
+  text-align: left;
+}
+.search-line{
+  display: flex;
+}
+.search-line>.el-input{
+  width: 600px;
+  margin-right: 20px;
+}
+.recommend-topics{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 600px;
+}
+.recommend-item{
+  width: 49%;
+  margin-top: 20px;
+  color: #409EFF;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  font-size: 20px;
+}
+.user-info{
+  width: 30%;
+  height: 280px;
+  background-color: #FFF;
+  box-sizing: border-box;
+  padding: 20px 20px 0 20px;
+}
+.edit-btn{
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
+.login-tips{
+  height: 40px;
+  line-height: 40px;
+  font-size: 24px;
 }
 .avatar{
-  margin-right: 10px;
-  background-color: #FFF;
-  border-radius: 50%;
-}
-.menu-item{
-  display: inline-block;
+  height: 100px;
   width: 100px;
-  text-align: center;
-  cursor: pointer;
 }
-.menu-item:hover{
-  color: #1482f0;
+.user-name{
+  font-size: 20px;
+  font-weight: 600;
+  margin: 10px 0;
 }
-.menu-item-activated{
-  color: #1482f0;
-}
-.filter-bar{
+.statistic{
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 30px;
 }
-.title{
-  display: inline-block;
-  font-size: 42px;
-  font-weight: 600;
-  color: #3e5df8;
-  margin-right: 30px;
-  width: 200px;
-}
-
-.sub-title{
-  margin-left: 10%;
-  font-size: 36px;
-  font-weight: 600;
-  color: #3e5df8;
-  /*margin-right: 30px;*/
-  width: 200px;
-}
-
-.search-field{
-  width: 600px;
+.collection, .like, .comment{
   display: flex;
+  flex-direction: column;
+  width: 80px;
+  align-items: center;
 }
-.search-btn{
-  margin-left: 20px;
+.icon{
+  width: 45px;
+  height: 45px;
 }
-.content{
-  width: 1504px;
-  margin: 0 auto;
+
+.third-part{
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.topic-docker{
+  width: 69%;
+  min-height: 600px;
+  background-color: #FFFFFF;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.hot-topics{
+  width: 30%;
+  height: 600px;
+  box-sizing: border-box;
+  background-color: #FFFFFF;
+}
+.topic-item{
+  cursor: pointer;
+  border-bottom: 1px solid #d0cfd0;
+  padding: 20px;
+}
+.topic-item:hover{
+  background-color: #e8e8e8;
+}
+.line1{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.topic-des{
+  display: inline-block;
+  width: 100px;
+}
+.topic-title{
+  text-align: left;
+  padding-left: 20px;
+  font-weight: 700;
+}
+.topic-content{
+  text-align: left;
+  padding-left: 20px;
+}
+.hot-topics{
+  padding: 20px;
+}
+.hot-topic-title {
+  text-align: left;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.hot-topic-item {
+  color: #409EFF;
+  font-size: 20px;
+  height: 40px;
+  line-height: 40px;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.top-btn {
+  height: 50px;
+  line-height: 50px;
+}
+.comment-icon{
+  width: 25px;
+  height: 25px;
 }
 </style>
