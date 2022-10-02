@@ -1,4 +1,4 @@
-package com.elec5619.domain;
+package com.elec5619.pojo;
 
 import java.util.Date;
 

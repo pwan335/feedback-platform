@@ -4,7 +4,19 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/5619_db #?serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/5619_db?serverTimezone=UTC
     username: root
     password: Qwertyuiop123
     type: com.alibaba.druid.pool.DruidDataSource
+
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #配置输出日志
+    map-underscore-to-camel-case: true  #开启驼峰命名转换
+  mapper-locations:
+    - classpath:mapper/*.xml
+  type-aliases-package: com.elec5619.pojo
+
+
+

@@ -1,6 +1,6 @@
 package com.elec5619.service;
 
-import com.elec5619.domain.User;
+import com.elec5619.pojo.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

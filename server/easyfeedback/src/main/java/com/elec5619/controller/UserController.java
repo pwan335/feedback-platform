@@ -1,6 +1,6 @@
 package com.elec5619.controller;
 
-import com.elec5619.domain.User;
+import com.elec5619.pojo.User;
 import com.elec5619.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

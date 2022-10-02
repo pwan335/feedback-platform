@@ -1,6 +1,6 @@
 package com.elec5619.service;
 
-import com.elec5619.domain.User;
+import com.elec5619.pojo.User;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -11,5 +11,5 @@ public interface UserService {
      * @param id
      * @return
      */
-    public User getById(Integer id);
+    User getById(Integer id);
 }
