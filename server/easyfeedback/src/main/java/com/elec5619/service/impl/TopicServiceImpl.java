@@ -17,28 +17,26 @@ public class TopicServiceImpl implements TopicService{
     @Autowired
     private TopicMapper topicMapper;
 
+    public Integer getCollectNumByTopicId(Integer topicId){
+        return topicMapper.getCollectNumByTopicId(topicId) != null ? topicMapper.getCollectNumByTopicId(topicId) : 0;
+    }
+
+    public Integer getLikeNumByTopicId(Integer topicId){
+        return topicMapper.getLikeNumByTopicId(topicId) != null ? topicMapper.getLikeNumByTopicId(topicId) : 0;
+    }
+
+    public Integer getCommentNum(Integer topicId){
+        return topicMapper.getCommentNum(topicId) != null ? topicMapper.getCommentNum(topicId) : 0;
+    }
+
     public List<TopicDetail> getByTopicName(String topicName){
         topicName = "%" + topicName + "%";
         List<TopicDetail> topicDetailList = topicMapper.getByTopicName(topicName);
         for (TopicDetail topicDetail : topicDetailList) {
             int topicId = topicDetail.getTopicId();
-            topicDetail.setCollectNum(topicMapper.getCollectNumByTopicId(topicId) != null ? topicMapper.getCollectNumByTopicId(topicId) : 0);
-            topicDetail.setLikeNum(topicMapper.getLikeNumByTopicId(topicId) != null ? topicMapper.getLikeNumByTopicId(topicId) : 0);
-            topicDetail.setCommentNum(topicMapper.getCommentNum(topicId) != null ? topicMapper.getCommentNum(topicId) : 0);
-//            int collectNum, likeNum;
-//            // 以下处理null值方法较繁琐
-//            if(topicMapper.getCollectNumByTopicId(topicId) != null){
-//                collectNum = topicMapper.getCollectNumByTopicId(topicId);
-//            }else {
-//                collectNum = 0;
-//            }
-//            if(topicMapper.getLikeNumByTopicId(topicId) != null){
-//                likeNum = topicMapper.getCollectNumByTopicId(topicId);
-//            }else {
-//                likeNum = 0;
-//            }
-//            topicDetail.setCollectNum(collectNum);
-//            topicDetail.setLikeNum(likeNum);
+            topicDetail.setCollectNum(this.getCollectNumByTopicId(topicId));
+            topicDetail.setLikeNum(this.getLikeNumByTopicId(topicId));
+            topicDetail.setCommentNum(this.getCommentNum(topicId));
         }
 
         return topicDetailList;
@@ -56,9 +54,9 @@ public class TopicServiceImpl implements TopicService{
         List<TopicDetail> topicDetailList = topicMapper.getLatestTopic();
         for (TopicDetail topicDetail : topicDetailList) {
             int topicId = topicDetail.getTopicId();
-            topicDetail.setCollectNum(topicMapper.getCollectNumByTopicId(topicId) != null ? topicMapper.getCollectNumByTopicId(topicId) : 0);
-            topicDetail.setLikeNum(topicMapper.getLikeNumByTopicId(topicId) != null ? topicMapper.getLikeNumByTopicId(topicId) : 0);
-            topicDetail.setCommentNum(topicMapper.getCommentNum(topicId) != null ? topicMapper.getCommentNum(topicId) : 0);
+            topicDetail.setCollectNum(this.getCollectNumByTopicId(topicId));
+            topicDetail.setLikeNum(this.getLikeNumByTopicId(topicId));
+            topicDetail.setCommentNum(this.getCommentNum(topicId));
         }
         return topicDetailList;
     }
@@ -72,9 +70,9 @@ public class TopicServiceImpl implements TopicService{
 
         for (TopicDetail topicDetail : topicDetailList) {
             int topicId = topicDetail.getTopicId();
-            int collectNum = topicMapper.getCollectNumByTopicId(topicId) != null ? topicMapper.getCollectNumByTopicId(topicId) : 0;
-            int likeNum = topicMapper.getLikeNumByTopicId(topicId) != null ? topicMapper.getLikeNumByTopicId(topicId) : 0;
-            int commentNum = topicMapper.getCommentNum(topicId) != null ? topicMapper.getCommentNum(topicId) : 0;
+            int collectNum = this.getCollectNumByTopicId(topicId);
+            int likeNum = this.getLikeNumByTopicId(topicId);
+            int commentNum = this.getCommentNum(topicId);
             int total = collectNum + likeNum + commentNum;
             map.put(topicId, total);
         }
@@ -87,13 +85,14 @@ public class TopicServiceImpl implements TopicService{
                 return o2.getValue().compareTo(o1.getValue());
             }
         });
+        // 遍历集合
         for (Map.Entry<Integer, Integer> mapping : list){
             int topicId = mapping.getKey();
-            TopicDetail topic = topicMapper.getTopicById(topicId);
-            topic.setCollectNum(topicMapper.getCollectNumByTopicId(topicId) != null ? topicMapper.getCollectNumByTopicId(topicId) : 0);
-            topic.setLikeNum(topicMapper.getLikeNumByTopicId(topicId) != null ? topicMapper.getLikeNumByTopicId(topicId) : 0);
-            topic.setCommentNum(topicMapper.getCommentNum(topicId) != null ? topicMapper.getCommentNum(topicId) : 0);
-            resultList.add(topic);
+            TopicDetail topicDetail = topicMapper.getTopicById(topicId);
+            topicDetail.setCollectNum(this.getCollectNumByTopicId(topicId));
+            topicDetail.setLikeNum(this.getLikeNumByTopicId(topicId));
+            topicDetail.setCommentNum(this.getCommentNum(topicId));
+            resultList.add(topicDetail);
         }
         return resultList;
     }
