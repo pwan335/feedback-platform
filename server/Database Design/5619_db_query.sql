@@ -129,3 +129,78 @@ DROP TABLE tbl_topic;
 DROP TABLE tbl_pm;
 -- DROP TABLE tbl_userPhoto;
 DROP TABLE tbl_user;
+
+
+INSERT INTO tbl_user VALUES( null, 'user2', 'abc123', '948936249@qq.com', 'china', null, null, null, '2022-01-19 22:22:22', '2022-01-19 22:22:22');
+
+INSERT INTO tbl_pm VALUES(null, 'pm1', 'abc123', '948936249@qq.com', 'China', '13812345678', 'Basketball, movie', null, 'Tencent', '2022-01-19 22:22:22', '2022-01-19 22:22:22');
+
+INSERT INTO tbl_topic VALUES(null, 1, 'The best way to study', 'read mroe, listen more and speak more!', '2022-01-19 10:15:00');
+INSERT INTO tbl_topic VALUES(null, 1, 'The best way to study2', 'read mroe, listen more and speak more!', '2022-01-20 11:11:11');
+INSERT INTO tbl_topic VALUES(null, 1, 'Test1', 'test1,test1,test1', '2022-09-28 17:08:11');
+
+INSERT INTO tbl_comment VALUES(null, 2, 1, 'very good!', '2022-01-19 11:11:11');
+INSERT INTO tbl_comment VALUES(null, 2, 1, 'very good222!', '2022-01-19 22:22:22');
+INSERT INTO tbl_comment VALUES(null, 3, 1, 'test comment1', '2022-09-28 17:10:11');
+
+INSERT INTO tbl_reply VALUES(null, 3, 1, 1, 'comment', 1, 'reply test1', '2022-01-19 22:22:22');
+
+INSERT INTO tbl_collects VALUES(null, 2, 1, '2022-09-19 22:22:22');
+INSERT INTO tbl_likes VALUES(null, 2, 1, '2022-09-19 22:22:22');
+
+-- 根据topicName 来搜索话题
+SELECT * FROM tbl_topic WHERE topicName LIKE '%study2%'
+-- 查询用户是否收藏该话题
+SELECT * from tbl_collects WHERE topic_id = 2 and uid = 1;
+-- 查询该话题的评论数，包括一级评论表和二级表
+SELECT topic_id, COUNT(*) FROM tbl_comment WHERE topic_id = 2;
+SELECT COUNT(*) FROM tbl_reply WHERE comment_id IN
+	(SELECT id FROM tbl_comment WHERE topic_id = 2);
+-- 查询用户是否点赞该话题
+SELECT IFNULL(id, FALSE) from tbl_likes WHERE topic_id = 1 and uid = 1;
+-- 根据时间排序最新话题
+SELECT * FROM tbl_topic ORDER BY date DESC;
+
+-- SELECT *
+-- FROM tbl_topic JOIN tbl_comment USING (topic_id)
+-- 			JOIN tbl_reply t2 ON (t1.id = t2.comment_id)
+
+-- 话题总评论数：一级评论+二级评论
+SELECT topic_id, IFNULL(SUM(comment + IFNULL(reply, 0)),0) AS total_comments
+FROM
+	(SELECT topic.topic_id, comment , reply -- , SUM(rep.reply + com.comment) AS total_comments
+	FROM
+		(tbl_topic topic
+	LEFT JOIN
+		(SELECT topic_id, COUNT(*) AS comment
+			FROM tbl_comment
+			GROUP BY topic_id) com USING(topic_id))
+	LEFT JOIN
+		(SELECT topic_id, COUNT(*) AS reply  -- 话题二级评论的数量
+			FROM tbl_comment com JOIN tbl_reply rep on com.id = rep.comment_id
+			GROUP BY topic_id) rep
+	ON rep.topic_id = com.topic_id) total
+GROUP BY topic_id;
+	
+-- 总点赞数
+SELECT tbl_topic.topic_id, IFNULL(likes,0) AS likeNum
+FROM 
+	tbl_topic 
+LEFT JOIN
+	(SELECT topic_id, COUNT(*) AS likes
+	FROM tbl_likes
+	GROUP BY topic_id) tb_like USING(topic_id)
+WHERE topic_id = 3;
+
+-- 总收藏数
+SELECT COUNT(*) AS collects
+FROM tbl_collects
+GROUP BY topic_id
+HAVING topic_id = 2;
+
+-- 封装话题信息：(topic_id, topicName, content, date, pm_id, pmName, photo) / (collectNum, collectState, commentNum, likeNum, likeState )
+SELECT  topic_id, topicName, content, tbl_topic.date, pmName, photo
+FROM 
+	tbl_topic LEFT JOIN tbl_pm USING(pm_id)
+						LEFT JOIN tbl_pmPhoto USING(pm_id)
+WHERE topicName LIKE '%study%'

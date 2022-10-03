@@ -10,14 +10,14 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Reply {
-    private Integer id;
-    private Integer commentId;
-    private Integer fromUid;
+    private Long id;
+    private Long commentId;
+    private Long fromUid;
     private String fromUname;
-    private Integer toUid;
+    private Long toUid;
     private String toUname;
     private String replyType;
-    private Integer replyId;
+    private Long replyId;
     private String content;
-    private Timestamp date;
+    private Timestamp createTime;
 }

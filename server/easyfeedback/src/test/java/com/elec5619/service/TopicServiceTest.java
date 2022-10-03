@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class TopicServiceTest {
 
     @Test
     public void testCollectedByUid(){
-        Collect collect = topicService.collectedByUid(2, 1);
+        Collect collect = topicService.collectedByUid(2L, 1L);
         boolean collected = collect != null ? true : false;
         System.out.println(collect);
         System.out.println(collected);
@@ -37,7 +38,7 @@ public class TopicServiceTest {
 
     @Test
     public void testLikedByUid(){
-        Like like = topicService.likedByUid(2, 1);
+        Like like = topicService.likedByUid(2L, 1L);
         boolean collected = like != null ? true : false;
         System.out.println(collected);
     }
@@ -57,9 +58,9 @@ public class TopicServiceTest {
     @Test
     public void TestSaveCollect(){
         Collect collect = new Collect();
-        collect.setTopicId(3);
-        collect.setUid(1);
-        collect.setDate(new Date(System.currentTimeMillis()));
+        collect.setTopicId(3L);
+        collect.setUid(1L);
+        collect.setCreateTime(new Timestamp(System.currentTimeMillis()));
         boolean state = topicService.saveCollect(collect);
         System.out.println(state);
     }
@@ -67,9 +68,9 @@ public class TopicServiceTest {
     @Test
     public void TestSaveLike(){
         Like like = new Like();
-        like.setTopicId(3);
-        like.setUid(1);
-        like.setDate(new Date(System.currentTimeMillis()));
+        like.setTopicId(3L);
+        like.setUid(1L);
+        like.setCreateTime(new Timestamp(System.currentTimeMillis()));
         boolean state = topicService.saveLike(like);
         System.out.println(state);
     }

@@ -23,7 +23,7 @@ public interface TopicService {
      * @param uid
      * @return
      */
-    Collect collectedByUid(Integer topicId, Integer uid);
+    Collect collectedByUid(Long topicId, Long uid);
 
     /**
      * 查询该用户是否点赞指定话题
@@ -31,7 +31,7 @@ public interface TopicService {
      * @param uid
      * @return
      */
-    Like likedByUid(Integer topicId, Integer uid);
+    Like likedByUid(Long topicId, Long uid);
 
     /**
      * 获取根据最新时间排序的话题列表

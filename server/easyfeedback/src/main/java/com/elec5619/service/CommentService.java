@@ -11,7 +11,7 @@ public interface CommentService {
      * @param topicId
      * @return
      */
-    List<Comment> listComment(Integer topicId);
+    List<Comment> listComment(Long topicId);
 
     /**
      * 用户插入一级评论

@@ -21,13 +21,13 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private UserService userService;
 
-    public String getUserName(Integer uid){
+    public String getUserName(Long uid){
         User user = userService.getById(uid);
         return user.getUsername();
     }
 
     @Override
-    public List<Comment> listComment(Integer topicId) {
+    public List<Comment> listComment(Long topicId) {
         List<Comment> commentList = commentMapper.listTopComment(topicId);
         for (Comment comment : commentList) {
             comment.setUsername(this.getUserName(comment.getUid()));

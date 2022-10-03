@@ -20,34 +20,34 @@ public interface TopicMapper {
     List<TopicDetail> getByTopicName(String topicName);
 
     //查找数据：收藏、点赞、评论
-    Integer getCollectNumByTopicId(Integer topicId);
-    Integer getLikeNumByTopicId(Integer topicId);
-    Integer getCommentNum(Integer topicId);
+    Integer getCollectNumByTopicId(Long topicId);
+    Integer getLikeNumByTopicId(Long topicId);
+    Integer getCommentNum(Long topicId);
 
 
     //查询指定用户是否收藏该话题
     @Select("select * from tbl_collects WHERE topic_id = #{topicId} and uid = #{uid}")
-    Collect collectedByUid(Integer topicId, Integer uid);
+    Collect collectedByUid(Long topicId, Long uid);
     //查询指定用户是否点赞该话题
     @Select("select * from tbl_likes WHERE topic_id = #{topicId} and uid = #{uid}")
-    Like likedByUid(Integer topicId, Integer uid);
+    Like likedByUid(Long topicId, Long uid);
 
-    @Select("select * from tbl_topic order by date desc")
+    @Select("select * from tbl_topic order by create_time desc")
     List<TopicDetail> getLatestTopic();
 
     @Select("select * from tbl_topic")
     List<TopicDetail> getAllTopic();
 
     @Select("select * from tbl_topic where topic_id = #{topicId}")
-    TopicDetail getTopicById(Integer topicId);
+    TopicDetail getTopicById(Long topicId);
 
     //用户收藏话题
-    @Insert("insert into tbl_collects (topic_id, uid, date) values(#{topicId}, #{uid}, #{date})")
-    int saveCollect(Collect collect);
+    @Insert("insert into tbl_collects (topic_id, uid, create_time) values(#{topicId}, #{uid}, #{createTime})")
+    Long saveCollect(Collect collect);
 
     //用户点赞话题
-    @Insert("insert into tbl_likes (topic_id, uid, date) values(#{topicId}, #{uid}, #{date})")
-    int saveLike(Like like);
+    @Insert("insert into tbl_likes (topic_id, uid, create_time) values(#{topicId}, #{uid}, #{createTime})")
+    Long saveLike(Like like);
 
 
 }

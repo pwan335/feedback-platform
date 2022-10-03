@@ -18,7 +18,7 @@ public class CommentController {
     private CommentService commentService;
 
     @GetMapping("/{topicId}")
-    public Result listComment(@PathVariable Integer topicId){
+    public Result listComment(@PathVariable Long topicId){
         List<Comment> commentList = commentService.listComment(topicId);
         Integer code = commentList != null ? Code.GET_OK : Code.GET_ERR;
         String msg = commentList != null ? "根据话题id搜索评论成功" : "数据查询失败，请重试！";

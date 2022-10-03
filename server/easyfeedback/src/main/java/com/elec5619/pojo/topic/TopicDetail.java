@@ -10,11 +10,11 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TopicDetail {
-    private Integer topicId;
+    private Long topicId;
     private String topicName;
     private String content;
-    private Timestamp date;
-    private Integer pmId;
+    private Timestamp createTime;
+    private Long pmId;
     private String pmName;
     private String photo;
     private Integer collectNum;

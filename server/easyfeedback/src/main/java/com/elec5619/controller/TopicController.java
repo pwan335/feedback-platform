@@ -27,7 +27,7 @@ public class TopicController {
     }
 
     @GetMapping("/topic/{topicId}/user/{uid}/collect")
-    public Result collectedByUid(@PathVariable Integer topicId, @PathVariable Integer uid){
+    public Result collectedByUid(@PathVariable Long topicId, @PathVariable Long uid){
         Collect collect = topicService.collectedByUid(topicId, uid);
         boolean collected = collect != null ? true : false;
         Integer code = collect != null ? Code.GET_OK : Code.GET_OK; // 查询得到就是收藏了，没有就是未收藏
@@ -37,7 +37,7 @@ public class TopicController {
 
 //    @GetMapping("/topic_id/{topicId}/uid/{uid}/actions/like")
     @GetMapping("/topic/{topicId}/user/{uid}/like")
-    public Result likedByUid(@PathVariable Integer topicId, @PathVariable Integer uid){
+    public Result likedByUid(@PathVariable Long topicId, @PathVariable Long uid){
         Like like = topicService.likedByUid(topicId, uid);
         boolean collected = like != null ? true : false;
         Integer code = like != null ? Code.GET_OK : Code.GET_OK; // 查询得到就是点赞了，没有就是未点赞

@@ -8,18 +8,17 @@
         <result property="topicId" column="topic_id"/>
         <result property="topicName" column="topicName"/>
         <result property="content" column="content"/>
-        <result property="date" column="date"/>
+        <result property="createTime" column="date"/>
         <result property="pmId" column="pm_id" />
         <result property="pmName" column="pmName" />
         <result property="photo" column="photo"/>
     </resultMap>
 
     <select id="getByTopicName" resultMap="topicQuery">
-        SELECT  topic_id, topicName, content, tbl_topic.date, pm_id, pmName, photo
+        SELECT  topic_id, topic_name, content, tbl_topic.create_time, pm_id, pm_name, avatar
         FROM
             tbl_topic LEFT JOIN tbl_pm USING(pm_id)
-                      LEFT JOIN tbl_pmPhoto USING(pm_id)
-        WHERE topicName LIKE #{topicName}
+        WHERE topic_name LIKE #{topicName}
     </select>
 
     <select id="getCollectNumByTopicId" resultType="java.lang.Integer">

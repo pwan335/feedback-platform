@@ -13,11 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comment {
-    private Integer id;
-    private Integer topicId;
-    private Integer uid;
+    private Long id;
+    private Long topicId;
+    private Long uid;
     private String username;
     private String content;
-    private Timestamp date;
+    private Timestamp createTime;
     private List<Reply> replyList = new ArrayList<>();
 }

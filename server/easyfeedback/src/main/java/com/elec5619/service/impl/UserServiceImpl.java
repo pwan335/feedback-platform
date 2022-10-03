@@ -13,7 +13,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public User getById(Integer id){
+    public User getById(Long id){
         return userMapper.getById(id);
     }
 

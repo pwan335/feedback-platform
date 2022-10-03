@@ -23,7 +23,7 @@ public class CommentServiceTest {
 
     @Test
     public void testListComment(){
-        List<Comment> commentList = commentService.listComment(2);
+        List<Comment> commentList = commentService.listComment(2L);
         System.out.println(commentList);
     }
 
@@ -31,10 +31,10 @@ public class CommentServiceTest {
     @Test
     public void testSaveTopComment(){
         Comment comment = new Comment();
-        comment.setUid(1);
-        comment.setTopicId(4);
+        comment.setUid(1L);
+        comment.setTopicId(2L);
         comment.setContent("comment test 123");
-        comment.setDate(new Timestamp(System.currentTimeMillis()));
+        comment.setCreateTime(new Timestamp(System.currentTimeMillis()));
         boolean flag = commentService.saveTopComment(comment);
         System.out.println(flag);
     }
@@ -42,13 +42,13 @@ public class CommentServiceTest {
     @Test
     public void testSaveTreeComment(){
         Reply reply = new Reply();
-        reply.setCommentId(3);
-        reply.setFromUid(1);
-        reply.setToUid(1);
+        reply.setCommentId(3L);
+        reply.setFromUid(1L);
+        reply.setToUid(1L);
         reply.setReplyType("comment");
-        reply.setReplyId(3);
+        reply.setReplyId(3L);
         reply.setContent("reply test 123");
-        reply.setDate(new Timestamp(System.currentTimeMillis()));
+        reply.setCreateTime(new Timestamp(System.currentTimeMillis()));
         boolean flag = commentService.saveTreeComment(reply);
         System.out.println(flag);
     }
