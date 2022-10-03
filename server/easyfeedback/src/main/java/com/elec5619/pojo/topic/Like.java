@@ -1,8 +1,8 @@
-package com.elec5619.pojo.query;
+package com.elec5619.pojo.topic;
 
 import lombok.Data;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 public class Like {

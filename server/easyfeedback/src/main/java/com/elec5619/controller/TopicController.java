@@ -1,15 +1,11 @@
 package com.elec5619.controller;
 
-import com.elec5619.pojo.Topic;
-import com.elec5619.pojo.query.Collect;
-import com.elec5619.pojo.query.Like;
-import com.elec5619.pojo.query.TopicDetail;
+import com.elec5619.pojo.topic.Collect;
+import com.elec5619.pojo.topic.Like;
+import com.elec5619.pojo.topic.TopicDetail;
 import com.elec5619.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -63,6 +59,18 @@ public class TopicController {
         Integer code = topicList != null ? Code.GET_OK : Code.GET_ERR;
         String msg = topicList != null ? "根据时间获取最新话题成功" : "数据查询失败，请重试！";
         return new Result(code, topicList, msg);
+    }
+
+    @PostMapping("/collect")
+    public Result saveCollect(@RequestBody Collect collect){
+        boolean flag = topicService.saveCollect(collect);
+        return new Result(flag ? Code.SAVE_OK:Code.SAVE_ERR,flag);
+    }
+
+    @PostMapping("/like")
+    public Result saveLike(@RequestBody Like like){
+        boolean flag = topicService.saveLike(like);
+        return new Result(flag ? Code.SAVE_OK:Code.SAVE_ERR,flag);
     }
 
 

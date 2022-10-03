@@ -1,11 +1,9 @@
-package com.elec5619.pojo.query;
+package com.elec5619.pojo.topic;
 
-import com.elec5619.pojo.Topic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Blob;
 import java.sql.Timestamp;
 
 @Data

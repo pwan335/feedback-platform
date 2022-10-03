@@ -1,9 +1,8 @@
 package com.elec5619.service;
 
-import com.elec5619.pojo.Topic;
-import com.elec5619.pojo.query.Collect;
-import com.elec5619.pojo.query.Like;
-import com.elec5619.pojo.query.TopicDetail;
+import com.elec5619.pojo.topic.Collect;
+import com.elec5619.pojo.topic.Like;
+import com.elec5619.pojo.topic.TopicDetail;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -40,5 +39,23 @@ public interface TopicService {
      */
     List<TopicDetail> getLatestTopic();
 
+    /**
+     * 根据点赞数、收藏数、评论数，从高到低获取热门话题
+     * @return
+     */
     List<TopicDetail> getHotTopic();
+
+    /**
+     * 用户点赞话题
+     * @param like
+     * @return
+     */
+    boolean saveLike(Like like);
+
+    /**
+     * 用户收藏话题
+     * @param collect
+     * @return
+     */
+    boolean saveCollect(Collect collect);
 }

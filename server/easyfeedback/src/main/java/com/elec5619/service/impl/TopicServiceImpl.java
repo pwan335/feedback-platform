@@ -1,10 +1,9 @@
 package com.elec5619.service.impl;
 
 import com.elec5619.dao.TopicMapper;
-import com.elec5619.pojo.Topic;
-import com.elec5619.pojo.query.Collect;
-import com.elec5619.pojo.query.Like;
-import com.elec5619.pojo.query.TopicDetail;
+import com.elec5619.pojo.topic.Collect;
+import com.elec5619.pojo.topic.Like;
+import com.elec5619.pojo.topic.TopicDetail;
 import com.elec5619.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,28 +16,32 @@ public class TopicServiceImpl implements TopicService{
     @Autowired
     private TopicMapper topicMapper;
 
-    public Integer getCollectNumByTopicId(Integer topicId){
-        return topicMapper.getCollectNumByTopicId(topicId) != null ? topicMapper.getCollectNumByTopicId(topicId) : 0;
-    }
+//    public Integer getCollectNumByTopicId(Integer topicId){
+//        return topicMapper.getCollectNumByTopicId(topicId) != null ? topicMapper.getCollectNumByTopicId(topicId) : 0;
+//    }
+//
+//    public Integer getLikeNumByTopicId(Integer topicId){
+//        return topicMapper.getLikeNumByTopicId(topicId) != null ? topicMapper.getLikeNumByTopicId(topicId) : 0;
+//    }
+//
+//    public Integer getCommentNum(Integer topicId){
+//        return topicMapper.getCommentNum(topicId) != null ? topicMapper.getCommentNum(topicId) : 0;
+//    }
 
-    public Integer getLikeNumByTopicId(Integer topicId){
-        return topicMapper.getLikeNumByTopicId(topicId) != null ? topicMapper.getLikeNumByTopicId(topicId) : 0;
-    }
-
-    public Integer getCommentNum(Integer topicId){
-        return topicMapper.getCommentNum(topicId) != null ? topicMapper.getCommentNum(topicId) : 0;
+    public List<TopicDetail> setTopicDetail(List<TopicDetail> topicDetailList){
+        for (TopicDetail topicDetail : topicDetailList) {
+            int topicId = topicDetail.getTopicId();
+            topicDetail.setCollectNum(topicMapper.getCollectNumByTopicId(topicId));
+            topicDetail.setLikeNum(topicMapper.getLikeNumByTopicId(topicId));
+            topicDetail.setCommentNum(topicMapper.getCommentNum(topicId));
+        }
+        return topicDetailList;
     }
 
     public List<TopicDetail> getByTopicName(String topicName){
         topicName = "%" + topicName + "%";
         List<TopicDetail> topicDetailList = topicMapper.getByTopicName(topicName);
-        for (TopicDetail topicDetail : topicDetailList) {
-            int topicId = topicDetail.getTopicId();
-            topicDetail.setCollectNum(this.getCollectNumByTopicId(topicId));
-            topicDetail.setLikeNum(this.getLikeNumByTopicId(topicId));
-            topicDetail.setCommentNum(this.getCommentNum(topicId));
-        }
-
+        topicDetailList = this.setTopicDetail(topicDetailList);
         return topicDetailList;
     }
 
@@ -52,12 +55,7 @@ public class TopicServiceImpl implements TopicService{
 
     public List<TopicDetail> getLatestTopic() {
         List<TopicDetail> topicDetailList = topicMapper.getLatestTopic();
-        for (TopicDetail topicDetail : topicDetailList) {
-            int topicId = topicDetail.getTopicId();
-            topicDetail.setCollectNum(this.getCollectNumByTopicId(topicId));
-            topicDetail.setLikeNum(this.getLikeNumByTopicId(topicId));
-            topicDetail.setCommentNum(this.getCommentNum(topicId));
-        }
+        topicDetailList = this.setTopicDetail(topicDetailList);
         return topicDetailList;
     }
 
@@ -70,9 +68,9 @@ public class TopicServiceImpl implements TopicService{
 
         for (TopicDetail topicDetail : topicDetailList) {
             int topicId = topicDetail.getTopicId();
-            int collectNum = this.getCollectNumByTopicId(topicId);
-            int likeNum = this.getLikeNumByTopicId(topicId);
-            int commentNum = this.getCommentNum(topicId);
+            int collectNum = topicMapper.getCollectNumByTopicId(topicId);
+            int likeNum = topicMapper.getLikeNumByTopicId(topicId);
+            int commentNum = topicMapper.getCommentNum(topicId);
             int total = collectNum + likeNum + commentNum;
             map.put(topicId, total);
         }
@@ -89,12 +87,22 @@ public class TopicServiceImpl implements TopicService{
         for (Map.Entry<Integer, Integer> mapping : list){
             int topicId = mapping.getKey();
             TopicDetail topicDetail = topicMapper.getTopicById(topicId);
-            topicDetail.setCollectNum(this.getCollectNumByTopicId(topicId));
-            topicDetail.setLikeNum(this.getLikeNumByTopicId(topicId));
-            topicDetail.setCommentNum(this.getCommentNum(topicId));
+            topicDetail.setCollectNum(topicMapper.getCollectNumByTopicId(topicId));
+            topicDetail.setLikeNum(topicMapper.getLikeNumByTopicId(topicId));
+            topicDetail.setCommentNum(topicMapper.getCommentNum(topicId));
             resultList.add(topicDetail);
         }
         return resultList;
+    }
+
+    @Override
+    public boolean saveLike(Like like) {
+        return topicMapper.saveLike(like) > 0;
+    }
+
+    @Override
+    public boolean saveCollect(Collect collect) {
+        return topicMapper.saveCollect(collect) > 0;
     }
 
 }

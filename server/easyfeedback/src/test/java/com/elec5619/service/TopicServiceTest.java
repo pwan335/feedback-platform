@@ -1,13 +1,13 @@
 package com.elec5619.service;
 
-import com.elec5619.pojo.Topic;
-import com.elec5619.pojo.query.Collect;
-import com.elec5619.pojo.query.Like;
-import com.elec5619.pojo.query.TopicDetail;
+import com.elec5619.pojo.topic.Collect;
+import com.elec5619.pojo.topic.Like;
+import com.elec5619.pojo.topic.TopicDetail;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
@@ -52,5 +52,25 @@ public class TopicServiceTest {
     public void TestGetHotTopic(){
         List<TopicDetail> topicList = topicService.getHotTopic();
         System.out.println(topicList);
+    }
+
+    @Test
+    public void TestSaveCollect(){
+        Collect collect = new Collect();
+        collect.setTopicId(3);
+        collect.setUid(1);
+        collect.setDate(new Date(System.currentTimeMillis()));
+        boolean state = topicService.saveCollect(collect);
+        System.out.println(state);
+    }
+
+    @Test
+    public void TestSaveLike(){
+        Like like = new Like();
+        like.setTopicId(3);
+        like.setUid(1);
+        like.setDate(new Date(System.currentTimeMillis()));
+        boolean state = topicService.saveLike(like);
+        System.out.println(state);
     }
 }

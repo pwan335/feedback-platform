@@ -19,7 +19,7 @@ public class UserController {
     public Result getById(@PathVariable Integer id){
         User user = userService.getById(id);
         Integer code = user != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = user != null ? "" : "数据查询失败，请重试！";
+        String msg = user != null ? "获取用户成功" : "数据查询失败，请重试！";
         return new Result(code, user, msg);
     }
 }
