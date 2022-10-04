@@ -1,5 +1,8 @@
 <template>
   <div class="container">
+    <div class="backHome_btn">
+      <el-button type="danger" size="small" plain @click="backHome">Back home</el-button>
+    </div>
     <div class="userInfo-container">
       <div class="item-list">
         <span :class="['item', activetedIndex==1?'item-activated':'']" @click="showForm(1)">Edit Profile</span>
@@ -9,6 +12,7 @@
         <div class="signOut_btn">
           <el-button type="danger" size="small" plain @click="signOut">Sign-out</el-button>
         </div>
+
       </div>
       <div class="detail" v-if="showProfile">
         <profile-component @updateUser="updateUser"/>
@@ -16,11 +20,11 @@
       <div class="detail" v-if="showPassword">
         <password-component />
       </div>
-      <div class="detail" v-if="showList">
-        <listing-component />
+      <div class="detail" v-if="showManage">
+        <manage-component />
       </div>
-      <div class="detail" v-if="showComments">
-        <comment-component />
+      <div class="detail" v-if="showTopic">
+        <topic-component />
       </div>
     </div>
   </div>
@@ -29,23 +33,23 @@
 <script>
 import ProfileComponent from "@/views/user-info/components/ProfileComponent";
 import PasswordComponent from "@/views/user-info/components/PasswordComponent";
-import ListingComponent from "@/views/user-info/components/ListingComponent";
-import CommentComponent from "@/views/user-info/components/CommentComponent";
+import ManageComponent from "@/views/user-info/components/ManageComponent";
+import TopicComponent from "@/views/user-info/components/TopicComponent";
 
 export default {
   name: "UserInfo",
   components: {
     PasswordComponent,
     ProfileComponent,
-    ListingComponent,
-    CommentComponent
+    ManageComponent,
+    TopicComponent
   },
   data() {
     return {
       showProfile: true,
       showPassword: false,
-      showList: false,
-      showComments: false,
+      showManage: false,
+      showTopic: false,
       activetedIndex: 1
     }
   },
@@ -63,28 +67,33 @@ export default {
       if(item == 1){
         this.showProfile = true;
         this.showPassword= false;
-        this.showList = false;
-        this.showComments = false;
+        this.showManage = false;
+        this.showTopic = false;
       }else if(item == 2){
         this.showProfile = false;
         this.showPassword= true;
-        this.showList = false;
-        this.showComments = false;
+        this.showManage = false;
+        this.showTopic = false;
       }else if(item == 3){
         this.showProfile = false;
         this.showPassword= false;
-        this.showList = true;
-        this.showComments = false;
+        this.showManage = true;
+        this.showTopic = false;
       }else if(item == 4){
         this.showProfile = false;
         this.showPassword= false;
-        this.showList = false;
-        this.showComments = true;
+        this.showManage = false;
+        this.showTopic = true;
       }
     },
     signOut(){
       // 退出登录，返回首页
       this.$router.go(-1)
+    },
+
+    backHome(){
+      // 返回首页
+      this.$router.back()
     },
 
     updateUser(){
@@ -118,6 +127,10 @@ export default {
 }
 
 .signOut_btn{
+  float: left;
+}
+
+.backHome_btn{
   float: left;
 }
 
