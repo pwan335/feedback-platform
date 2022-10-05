@@ -1,20 +1,14 @@
 package com.elec5619.service.impl;
 
 
-import com.elec5619.pojo.User;
-import com.elec5619.dao.UserMapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.elec5619.dao.UserDao;
+import com.elec5619.domain.User;
 import com.elec5619.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserDao,User> implements UserService {
 
-    @Autowired
-    private UserMapper userMapper;
-
-    public User getById(Long id){
-        return userMapper.getById(id);
-    }
 
 }

@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.elec5619.dao.TopicMapper">
-    <resultMap id="topicQuery" type="TopicDetail">
+    <resultMap id="topicQuery" type="com.elec5619.pojo.topic.TopicDetail">
         <result property="topicId" column="topic_id"/>
         <result property="topicName" column="topicName"/>
         <result property="content" column="content"/>

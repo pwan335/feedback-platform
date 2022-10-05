@@ -4,11 +4,11 @@ import com.elec5619.pojo.topic.Collect;
 import com.elec5619.pojo.topic.Like;
 import com.elec5619.pojo.topic.TopicDetail;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.elec5619.domain.Topic;
 import java.util.List;
 
-@Transactional
-public interface TopicService {
+public interface TopicService  extends IService<Topic> {
 
     /**
      * 按topicName进行话题搜索

@@ -34,13 +34,12 @@ public interface TopicMapper {
 
     @Select("select * from tbl_topic order by create_time desc")
     List<TopicDetail> getLatestTopic();
-
     @Select("select * from tbl_topic")
     List<TopicDetail> getAllTopic();
 
     @Select("select * from tbl_topic where topic_id = #{topicId}")
     TopicDetail getTopicById(Long topicId);
-
+    ///jiushi ni de nage youxiang
     //用户收藏话题
     @Insert("insert into tbl_collects (topic_id, uid, create_time) values(#{topicId}, #{uid}, #{createTime})")
     Long saveCollect(Collect collect);

@@ -1,7 +1,7 @@
 package com.elec5619.service.impl;
 
 import com.elec5619.dao.CommentMapper;
-import com.elec5619.pojo.User;
+import com.elec5619.domain.User;
 import com.elec5619.pojo.comment.Comment;
 import com.elec5619.pojo.comment.Reply;
 import com.elec5619.service.CommentService;
@@ -23,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
 
     public String getUserName(Long uid){
         User user = userService.getById(uid);
-        return user.getUsername();
+        return user.getUserName();
     }
 
     @Override

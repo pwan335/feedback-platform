@@ -1,15 +1,9 @@
 package com.elec5619.service;
 
-import com.elec5619.pojo.User;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-public interface UserService {
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.elec5619.domain.User;
 
-    /**
-     * 按id查询用户信息
-     * @param id
-     * @return
-     */
-    User getById(Long id);
+public interface UserService extends IService<User> {
+
 }
