@@ -53,9 +53,9 @@ public class UserController {
         account.setHost("smtp.qq.com");
         account.setPort(25);
         account.setAuth(true);
-        account.setFrom("824039688@qq.com");
-        account.setUser("824039688@qq.com");
-        account.setPass("sdcyawivlyxebfde");
+        account.setFrom("2402714619@qq.com");
+        account.setUser("2402714619@qq.com");
+        account.setPass("wgtythlxxoajdida");
         String msg=MailUtil.send(account,email,"注册验证码",code,false);
         System.out.println(msg);
         Constant.map.put(email,new CheckCodeMsg(email,code));
