@@ -42,7 +42,7 @@ public class UserController {
     public Result getById(@PathVariable Long id){
         User user = userService.getById(id);
         Integer code = user != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = user != null ? "" : "数据查询失败，请重试！";
+        String msg = user != null ? "" : "data query failure！ try again";
         return new Result(code, user, msg);
     }
 
@@ -56,7 +56,7 @@ public class UserController {
         account.setFrom("2402714619@qq.com");
         account.setUser("2402714619@qq.com");
         account.setPass("wgtythlxxoajdida");
-        String msg=MailUtil.send(account,email,"注册验证码",code,false);
+        String msg=MailUtil.send(account,email,"register code",code,false);
         System.out.println(msg);
         Constant.map.put(email,new CheckCodeMsg(email,code));
         return Result.success(null);

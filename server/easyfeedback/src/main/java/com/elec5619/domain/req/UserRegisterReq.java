@@ -8,20 +8,20 @@ import java.io.File;
 
 @Data
 public class UserRegisterReq {
-    @NotBlank(message = "用户名不能为空")
+    @NotBlank(message = "username can't be null")
     private String userName;
-    @NotBlank(message = "密码不能为空")
+    @NotBlank(message = "password can't be null")
     private String password;
-    @NotBlank(message = "确认密码不能为空")
+    @NotBlank(message = "password confirmation cannot be empty")
     private String confirmPassword;
     private String address;
-    @NotBlank(message = "邮箱不能为空")
+    @NotBlank(message = "email can't be empty")
     private String email;
-    @NotBlank(message = "电话不能为空")
+    @NotBlank(message = "phone number can't be empty")
     private String phoneNumber;
     private String hobby;
     private MultipartFile picFile;
-    @NotBlank(message = "验证码不能为空")
+    @NotBlank(message = "verification code can't be empty")
     private String code;
 
 }

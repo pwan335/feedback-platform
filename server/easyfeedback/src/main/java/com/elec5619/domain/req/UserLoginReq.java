@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class UserLoginReq {
-    @NotBlank(message = "请输入电话或者邮箱")
+    @NotBlank(message = "please type in phone number or email")
     private String key;
     @NotBlank
     private String password;

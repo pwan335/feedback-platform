@@ -21,7 +21,7 @@ public class CommentController {
     public Result listComment(@PathVariable Long topicId){
         List<Comment> commentList = commentService.listComment(topicId);
         Integer code = commentList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = commentList != null ? "根据话题id搜索评论成功" : "数据查询失败，请重试！";
+        String msg = commentList != null ? "The search for comments based on topic ID was successful" : "Data query failed, please try again!";
         return new Result(code, commentList, msg);
     }
 

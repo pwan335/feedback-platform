@@ -102,7 +102,7 @@ public class TopicController {
     public Result getByTopicName(@PathVariable String topicName){
         List<TopicDetail> topicList = topicService.getByTopicName(topicName);
         Integer code = topicList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = topicList != null ? "根据话题名搜索成功" : "数据查询失败，请重试！";
+        String msg = topicList != null ? "The search succeeds based on the topic name" : "Data query failed, please try again!";
         return new Result(code, topicList, msg);
     }
 
@@ -111,7 +111,7 @@ public class TopicController {
         Collect collect = topicService.collectedByUid(topicId, uid);
         boolean collected = collect != null ? true : false;
         Integer code = collect != null ? Code.GET_OK : Code.GET_OK; // 查询得到就是收藏了，没有就是未收藏
-        String msg = collect != null ? "该用户已收藏该话题" : "该用户未收藏该话题";
+        String msg = collect != null ? "The user has bookmarked the topic" : "This user has not bookmarked this topic";
         return new Result(code, collected, msg);
     }
 
@@ -121,7 +121,7 @@ public class TopicController {
         Like like = topicService.likedByUid(topicId, uid);
         boolean collected = like != null ? true : false;
         Integer code = like != null ? Code.GET_OK : Code.GET_OK; // 查询得到就是点赞了，没有就是未点赞
-        String msg = like != null ? "该用户已点赞该话题" : "该用户未点赞该话题";
+        String msg = like != null ? "The user has thumbed up on the topic" : "The user didn't thumb up on the topic";
         return new Result(code, collected, msg);
     }
 
@@ -129,7 +129,7 @@ public class TopicController {
     public Result getLatestTopic(){
         List<TopicDetail> topicList = topicService.getLatestTopic();
         Integer code = topicList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = topicList != null ? "根据时间获取最新话题成功" : "数据查询失败，请重试！";
+        String msg = topicList != null ? "Get the latest topic success according to time" : "Data query failed, please try again!";
         return new Result(code, topicList, msg);
     }
 
@@ -137,7 +137,7 @@ public class TopicController {
     public Result getHotTopic(){
         List<TopicDetail> topicList = topicService.getHotTopic();
         Integer code = topicList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = topicList != null ? "根据时间获取最新话题成功" : "数据查询失败，请重试！";
+        String msg = topicList != null ? "Get the latest topic success according to time" : "Data query failed, please try again!";
         return new Result(code, topicList, msg);
     }
 
