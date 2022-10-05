@@ -10,7 +10,7 @@ CREATE TABLE `tbl_user` (
                             `sign` varchar(255) not null,
                             `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             `update_time` datetime NOT NULL  DEFAULT  CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                            PRIMARY KEY (`id`)
+                            PRIMARY KEY (`uid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE tbl_userPhoto(
