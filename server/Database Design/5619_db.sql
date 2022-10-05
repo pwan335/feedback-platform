@@ -1,10 +1,10 @@
 CREATE TABLE `tbl_user` (
-                            `uid` tinyint(4) NOT NULL AUTO_INCREMENT,
-                            `username` varchar(20) DEFAULT NULL,
+                            `uid` tinyint(20) NOT NULL AUTO_INCREMENT,
+                            `user_name` varchar(20) DEFAULT NULL,
                             `password` varchar(30) DEFAULT NULL,
                             `email` varchar(30) DEFAULT NULL,
                             `address` varchar(50) DEFAULT NULL,
-                            `phoneNumber` varchar(30) DEFAULT NULL,
+                            `phone_number` varchar(30) DEFAULT NULL,
                             `hobby` varchar(50) DEFAULT NULL,
                             `user_type` char(2) DEFAULT NULL,
                             `sign` varchar(255) not null,
@@ -22,11 +22,11 @@ CREATE TABLE tbl_userPhoto(
 
 CREATE TABLE tbl_pm(
                        pm_id tinyint NOT NULL AUTO_INCREMENT,
-                       pmName VARCHAR(20) UNIQUE NOT NULL,
+                       pm_name VARCHAR(20) UNIQUE NOT NULL,
                        password VARCHAR(30) NOT NULL,
                        email VARCHAR(30) NOT null,
                        address VARCHAR(50),
-                       phoneNumber VARCHAR(30),
+                       phone_number VARCHAR(30),
                        hobby VARCHAR(50),
                        company VARCHAR(50),
                        date DATE NOT NULL,
@@ -43,9 +43,10 @@ CREATE TABLE tbl_pmPhoto(
 CREATE TABLE tbl_topic(
                           topic_id INT NOT NULL AUTO_INCREMENT,
                           pm_id INT NOT NULL,
-                          topicName VARCHAR(50),
+                          topic_name VARCHAR(50),
                           content VARCHAR(500),
                           date DATE NOT NULL,
+                          create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           PRIMARY KEY (topic_id, pm_id),
                           FOREIGN KEY (pm_id) REFERENCES tbl_pm(pm_id)
 );

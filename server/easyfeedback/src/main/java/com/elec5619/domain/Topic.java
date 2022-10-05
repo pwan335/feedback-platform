@@ -14,7 +14,7 @@ import java.util.Date;
 public class Topic {
     @TableId(value = "topic_id",type = IdType.AUTO)
     private Long topicId;
-    @TableField("topicName")
+    @TableField("topic_name")
     private String title;
     @TableField("content")
     private String content;

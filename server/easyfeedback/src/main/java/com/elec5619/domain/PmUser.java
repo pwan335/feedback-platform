@@ -10,7 +10,7 @@ public class PmUser {
 
     @TableId(value = "pm_id",type = IdType.AUTO)
     private Long userId;
-    @TableField("pmName")
+    @TableField("pm_name")
     private String userName;
     @TableField("password")
     private String password;
@@ -18,7 +18,7 @@ public class PmUser {
     private String email;
     @TableField(value = "address",updateStrategy = FieldStrategy.IGNORED)
     private String address;
-    @TableField(value = "phoneNumber",updateStrategy = FieldStrategy.IGNORED)
+    @TableField(value = "phone_number",updateStrategy = FieldStrategy.IGNORED)
     private String phoneNumber;
     @TableField(value = "hobby",updateStrategy = FieldStrategy.IGNORED)
     private String hobby;

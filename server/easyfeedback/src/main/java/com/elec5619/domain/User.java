@@ -11,7 +11,7 @@ public class User {
 
     @TableId(value = "uid",type = IdType.AUTO)
     private Long userId;
-    @TableField("username")
+    @TableField("user_name")
     private String userName;
     @TableField("password")
     private String password;
@@ -21,7 +21,7 @@ public class User {
     private String email;
     @TableField(value = "address",updateStrategy = FieldStrategy.IGNORED)
     private String address;
-    @TableField(value = "phoneNumber",updateStrategy = FieldStrategy.IGNORED)
+    @TableField(value = "phone_number",updateStrategy = FieldStrategy.IGNORED)
     private String phoneNumber;
     @TableField(value = "hobby",updateStrategy = FieldStrategy.IGNORED)
     private String hobby;
@@ -33,8 +33,4 @@ public class User {
     private Date updTm;
     @TableField(exist = false)
     private String pic;
-
-
-
-
 }
