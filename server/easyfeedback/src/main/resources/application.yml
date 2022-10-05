@@ -8,7 +8,10 @@ spring:
     username: root
     password: Qwertyuiop123
     type: com.alibaba.druid.pool.DruidDataSource
-
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 1MB
 
 mybatis:
   configuration:
