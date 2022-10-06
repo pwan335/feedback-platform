@@ -30,6 +30,7 @@ CREATE TABLE tbl_pm(
                        hobby VARCHAR(50),
                        company VARCHAR(50),
                        date DATE NOT NULL,
+                       uid tinyint,
                        PRIMARY KEY (pm_id)
 );
 
@@ -99,6 +100,7 @@ CREATE TABLE tbl_reply(
                           reply_id int NOT NULL,	-- 表示回复目标的 id,如果 reply_type 是 comment 的话,那么 reply_id = commit id,如果 reply_type 是 reply 的话,这表示这条回复的父回复.
                           content VARCHAR(100) NOT NULL,
                           date DATE NOT NULL,
+                          create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           PRIMARY KEY (id, comment_id, from_uid),
                           FOREIGN KEY (comment_id) REFERENCES tbl_comment(id),
                           FOREIGN KEY (from_uid) REFERENCES tbl_user(uid),

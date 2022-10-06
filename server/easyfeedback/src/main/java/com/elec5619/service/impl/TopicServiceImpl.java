@@ -1,7 +1,5 @@
 package com.elec5619.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.elec5619.dao.TopicDao;
 import com.elec5619.dao.TopicMapper;
 import com.elec5619.domain.Topic;
 import com.elec5619.pojo.topic.Collect;
@@ -14,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class TopicServiceImpl extends ServiceImpl<TopicDao, Topic> implements TopicService{
+public class TopicServiceImpl implements TopicService{
 
     @Autowired
     private TopicMapper topicMapper;

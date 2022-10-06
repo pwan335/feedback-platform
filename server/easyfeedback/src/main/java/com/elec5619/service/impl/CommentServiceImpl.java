@@ -22,7 +22,7 @@ public class CommentServiceImpl implements CommentService {
     private UserService userService;
 
     public String getUserName(Long uid){
-        User user = userService.getById(uid);
+        User user = userService.getUserById(uid+"");
         return user.getUserName();
     }
 

@@ -17,10 +17,9 @@ public class UserModifyReq  extends  BaseReq{
     private String hobby;
     private MultipartFile picFile;
     @NotBlank
-    private String userType;
-    @NotBlank
     private String password;
     @NotBlank
     private String moidfyId;
+    private String company;
 
 }
