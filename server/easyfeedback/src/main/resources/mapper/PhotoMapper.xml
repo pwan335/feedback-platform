@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.elec5619.dao.PhotoDao">
+    <insert id="saveUserPhoto" parameterType="com.elec5619.domain.UserPhoto">
+        insert into tbl_userPhoto(uid,photo) values (#{uid},#{photo})
+    </insert>
+
+    <insert id="saveTopicPhoto" parameterType="com.elec5619.domain.TopicPhoto">
+        insert into tbl_topicPhoto(topic_id,photo) values (#{topicId},#{photo})
+    </insert>
+
+    <insert id="savePmPhoto" parameterType="com.elec5619.domain.PmPhoto">
+        insert into tbl_pmPhoto(pm_id,photo) values (#{pmId},#{photo})
+    </insert>
+
+    <select id="getUserPic" resultType="com.elec5619.domain.UserPhoto">
+        select id,uid,photo from tbl_userPhoto where uid=#{uid}
+    </select>
+
+    <update id="updateUserPhoto" parameterType="com.elec5619.domain.UserPhoto">
+        update tbl_userPhoto set photo=#{photo} where id=#{id}
+    </update>
+
+    <select id="getPmPic" resultType="com.elec5619.domain.PmPhoto">
+        select id,pm_id,photo from tbl_pmPhoto where pm_id=#{pid}
+    </select>
+
+    <update id="updatePmPhoto" parameterType="com.elec5619.domain.UserPhoto">
+        update tbl_pmPhoto set photo=#{photo} where id=#{id}
+    </update>
+</mapper>
+
+

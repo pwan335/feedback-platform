@@ -14,7 +14,7 @@ class UserServiceTest {
 
     @Test
     public void testGetById(){
-        User user = userService.getById(1);
+        User user = userService.getUserById("1");
         System.out.println(user);
     }
 

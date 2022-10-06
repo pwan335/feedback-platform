@@ -1,7 +1,6 @@
 package com.elec5619.aspect;
 
 import cn.hutool.core.util.ReflectUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.elec5619.annotation.ValidateToken;
 import com.elec5619.dao.UserDao;
 import com.elec5619.domain.ErrorCode;
@@ -30,9 +29,7 @@ public class ValidateTokenAspect {
     }
 
     private void tokenValidation(String userId,String token){
-        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("uid",userId);
-        User user=userDao.selectOne(queryWrapper);
+        User user=userDao.getByUid(userId);
         if(user==null){
             throw new ServiceException(ErrorCode.USER_NOT_FOUND);
         }

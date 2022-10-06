@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.elec5619.dao.UserDao">
+    <resultMap id="getUser" type="com.elec5619.domain.User">
+        <result column="uid" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="address" property="address"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="hobby" property="hobby"/>
+        <result column="user_type" property="userType"/>
+        <result column="sign" property="sign"/>
+        <result column="create_time" property="crtTm" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updTm" jdbcType="DATE"/>
+    </resultMap>
+
+    <resultMap id="getPmUser" type="com.elec5619.domain.PmUser">
+        <result column="pm_id" property="userId"/>
+        <result column="pm_name" property="pmName"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="address" property="address"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="hobby" property="hobby"/>
+        <result column="company" property="company"/>
+        <result column="date" property="date" jdbcType="DATE"/>
+        <result column="uid" property="userId"></result>
+    </resultMap>
+    <select id="getByUid" resultMap="getUser">
+        select * from tbl_user where uid=#{uid}
+    </select>
+
+    <select id="getUsers" resultMap="getUser" parameterType="com.elec5619.domain.req.UserListReq">
+        select * from tbl_user
+        <where>
+            <if test="userName!=null and userName!=''">
+                user_name=#{userName}
+            </if>
+            <if test="email!=null and email!=''">
+               and email =#{email}
+            </if>
+            <if test="tel!=null and tel!=''">
+               and  phone_number=#{tel}
+            </if>
+            <if test="userType!=null and userType!=''">
+                and  user_type=#{userType}
+            </if>
+        </where>
+    </select>
+
+    <insert id="saveUser" parameterType="com.elec5619.domain.User" keyProperty="uid" useGeneratedKeys="true">
+        insert into tbl_user(user_name,password,email,address,phone_number,hobby,user_type,sign)
+            values (#{userName},#{password},#{email},#{address},#{phoneNumber},#{hobby},#{userType},#{sign})
+    </insert>
+
+    <update id="modifyUser" parameterType="com.elec5619.domain.User">
+        update tbl_user set user_name=#{userName},password=#{password},email=#{email},
+        address=#{address},phone_number=#{phoneNumber},hobby=#{hobby},user_type=#{userType}
+        where uid=#{userId}
+    </update>
+
+    <select id="getUsersByEmailOrTel" resultMap="getUser">
+        select * from tbl_user where phone_number=#{tel} or email =#{mail}
+    </select>
+
+    <select id="userLogin" resultMap="getUser">
+        select * from  tbl_user where password=#{password}  and user_type=#{userType} and (phone_number=#{tel} or email =#{mail})
+    </select>
+
+    <select id="getPmUserById" resultMap="getPmUser">
+        select * from tbl_pm where pm_id=#{pid}
+    </select>
+    <update id="updatePmUser" parameterType="com.elec5619.domain.PmUser">
+        update tbl_pm set pm_name=#{userName},password=#{password},email=#{email},
+                            address=#{address},phone_number=#{phoneNumber},hobby=#{hobby},company=#{company}
+        where pm_id=#{pmId}
+    </update>
+
+    <insert id="savePmUser" parameterType="com.elec5619.domain.PmUser">
+        insert into tbl_pm(pm_name,password,email,address,phone_number,hobby,company,uid,date)
+        values (#{pmName},#{password},#{email},#{address},#{phoneNumber},#{hobby},#{company},#{userId},now())
+    </insert>
+</mapper>
+
+
