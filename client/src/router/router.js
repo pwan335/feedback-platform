@@ -6,7 +6,7 @@ Vue.use(Router)
 // static router
 export const constantRoutes = [
     {
-        path: '',
+        path: '/',
         name: 'home',
         component: resolve => require(['@/views/home/HomePage.vue'], resolve),
         hidden: true

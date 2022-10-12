@@ -10,6 +10,13 @@
         <div class="login-title">Log In</div>
         <el-input class="user icon"  placeholder="Email" v-model="email"></el-input>
         <el-input type="password"  class="password icon"  placeholder="Password" v-model="password"></el-input>
+        <div >
+          <el-switch
+              v-model="isManager"
+              active-text="I'm a PM"
+              inactive-text="I'm a user">
+          </el-switch>
+        </div>
         <el-button class="login_btn" @click.native="login" type="primary" round :loading="isBtnLoading">Login</el-button>
         <div class="login_bottom">
           <span class="sign_up" @click="toSignup">Sign-up</span>
@@ -43,7 +50,7 @@
 </template>
 
 <script>
-import {forgetPassword, signUpAction} from "@/api/user";
+import {forgetPassword, pmLogin, userRegister, userLogin, pmRegister} from "@/api/user";
 import md5 from 'js-md5'
 import {validPassword} from "@/utils";
 
@@ -77,7 +84,7 @@ export default {
     }
   },
   created () {
-
+    console.log(md5('Mcqbq1ep'))
   },
   computed: {
     btnText() {
@@ -94,7 +101,7 @@ export default {
       this.changeShow(false)
     },
 
-    login() {
+    async login() {
       if (!this.email) {
         this.$message.error('Please input your email');
         return;
@@ -113,14 +120,47 @@ export default {
         this.$message.error('Please input your password');
         return;
       }
-      //  Login request actions
-      const userInfo = {
-        "email": this.email,
-        "password": md5(this.password)
-      }
+
       // 调用登录接口,登录成功后返回首页
-      this.$emit('loginSuccess')
-      this.handleClose()
+      if(!this.isManager) {
+        const userInfo = {
+          "role": 'user',
+          "email": this.email,
+          "password": md5(this.password)
+        }
+        try {
+          const res = await userLogin(userInfo)
+          if(res.code==20011) {
+            localStorage.setItem('token', res.data.token)
+            localStorage.setItem('role', 'user')
+            this.$emit('loginSuccess')
+            this.handleClose()
+          } else {
+            this.$message.error(res.msg)
+          }
+        } catch (err) {
+          console.log(err)
+        }
+      } else {
+        const userInfo = {
+          "role": 'pm',
+          "email": this.email,
+          "password": md5(this.password)
+        }
+        try {
+          const res = await pmLogin(userInfo)
+          if(res.code==20011) {
+            localStorage.setItem('token', res.data.token)
+            localStorage.setItem('role', 'pm')
+            this.$emit('loginSuccess')
+            this.handleClose()
+          } else {
+            this.$message.error(res.msg)
+          }
+        } catch (err) {
+          console.log(err)
+        }
+      }
     },
 
     toSignup(){
@@ -158,11 +198,6 @@ export default {
         this.$message.error('Please input your first name');
         return;
       }
-      if (!this.lastName) {
-        this.$message.error('Please input your last name');
-        return;
-      }
-
       if (!this.newEmail) {
         this.$message.error('Please input your email');
         return;
@@ -177,7 +212,6 @@ export default {
           return;
         }
       }
-
       if (!this.newPassword) {
         this.$message.error('Please input your password');
         return;
@@ -187,47 +221,51 @@ export default {
           return;
         }
       }
-
-      //  signup request actions
-      const userInfo = {
-        "userName": this.userName,
-        "lastname": this.lastName,
-        "email": this.newEmail,
-        "password": md5(this.newPassword)
+      if(!this.confirmPassword) {
+        this.$message.error('Please input confirm password');
+        return;
       }
-      signUpAction(userInfo).then(res=>{
-        if(res.success) {
-          this.$message.success('Sign up successfully! Go to verify!');
-          this.showLogin = true;
-          this.showSignUp = false;
-        }else{
-          this.$message.error(res.message);
-        }
-      }, err=>{
-        this.$message.error(err)
-      })
+      if(this.confirmPassword!==this.newPassword) {
+        this.$message.error('The password entered twice does not match');
+        return;
+      }
 
-      // After login successfully
-      this.$emit('sign-up');
-    },
-
-    verifyEmail(val){
-      let info ={
-        "email" : val,
-        "route": `http://localhost:8090/#/reset-password?email=${val}`
-      };
-      // Write an api to verify email and send reset password link in the past
-      forgetPassword(info).then(res => {
-        console.log(res)
-        if(res.success){
-          this.$message.success('Confirm your email successfully, go to verify!');
-        }else{
-          this.$message.error(res.message);
+      if(!this.isManager) {
+        const userInfo = {
+          "userName": this.userName,
+          "email": this.newEmail,
+          "password": md5(this.newPassword)
         }
-        console.log(res);
-      }, err => {
-        console.log(err);
-      });
+        userRegister(userInfo).then(res=>{
+          if(res.code==20021) {
+            this.$message.success('Sign up successfully! Go to verify!');
+            this.showLogin = true;
+            this.showSignUp = false;
+          }else{
+            this.$message.error(res.msg);
+          }
+        }, err=>{
+          this.$message.error(err)
+        })
+      } else {
+        const userInfo= {
+          userName: this.userName,
+          company: this.company,
+          email: this.newEmail,
+          password: md5(this.newPassword)
+        }
+        pmRegister(userInfo).then(res=>{
+          if(res.code==20021) {
+            this.$message.success('Sign up successfully! Go to verify!');
+            this.showLogin = true;
+            this.showSignUp = false;
+          }else{
+            this.$message.error(res.msg);
+          }
+        }, err=>{
+          this.$message.error(err)
+        })
+      }
     },
 
   }

@@ -3,81 +3,74 @@
     <div class="navigation">
       <el-image class="navigation-bg" :src="require('../../assets/home_images/bg.jpg')" />
     </div>
-    <div class="second-part">
-      <div class="search-topic">
-        <div class="search-title">Search Topic</div>
+
+    <div class="third-part">
+      <div class="topic-docker">
         <div class="search-line">
           <el-input v-model="topicName" />
           <el-button type="primary">Search</el-button>
         </div>
-        <div class="recommend-topics">
-          <div v-for="(item, index) in recommendTopics" :key="index" class="recommend-item">{{item.name}}</div>
-        </div>
-      </div>
-      <div class="user-info">
-        <div v-if="!isLogin">
-          <div class="login-tips">Login to find more...</div>
-          <el-button @click="handleLogin">click here</el-button>
-        </div>
-        <div v-else style="position:relative;">
-          <el-button class="edit-btn" type="text" @click="userCenter">user center</el-button>
-          <div>
-            <el-image :src="require(`../../assets/home_images/${userInfo.avatar}.png`)" class="avatar" />
-          </div>
-          <div class="user-name">{{userInfo.userName}}</div>
-          <div class="statistic">
-            <div class="collection">
-              <el-image :src="require('../../assets/home_images/collection.png')" class="icon" />
-              <div>{{userInfo.collections}}</div>
-            </div>
-            <div class="comment">
-              <el-image :src="require('../../assets/home_images/comment.png')" class="icon" />
-              <div>{{userInfo.comments}}</div>
-            </div>
-            <div class="like">
-              <el-image :src="require('../../assets/home_images/like.png')" class="icon" />
-              <div>{{userInfo.like}}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="third-part">
-      <div class="topic-docker">
         <div class="top-btn" v-show="isLogin">
-          <el-button type="primary" size="mini">Recommend</el-button>
-          <el-button type="primary" size="mini">My Comments</el-button>
-          <el-button type="primary" size="mini">My Star</el-button>
+          <el-button type="primary" size="mini" @click="getLatest">Latest</el-button>
+          <el-button type="primary" size="mini" @click="getRecommend">Recommend</el-button>
         </div>
         <div class="topic-item" v-for="(item, index) in topicInfo" :key="index">
           <div class="line1">
             <el-image :src="require(`../../assets/home_images/${item.avatar}.png`)" class="icon"  />
             <div class="topic-des">
-              <div>{{item.userName}}</div>
-              <div>{{item.time}}</div>
+              <div class="pm-name">{{item.pmName}}</div>
+              <div>{{item.createTime}}</div>
             </div>
           </div>
           <div @click="toDetails(item)">
-            <div class="topic-title">{{item.title}}</div>
-            <div class="topic-content">{{item.describe}}</div>
+            <div class="topic-title">{{item.topicName}}</div>
+            <div class="topic-content">{{item.content}}</div>
           </div>
-          <div>
-            <el-image :src="require('../../assets/home_images/collection.png')" class="comment-icon" />
-            <span>
-              <el-image :src="require('../../assets/home_images/comment.png')" class="comment-icon" />
-              <span>80</span>
-            </span>
-            <span>
-              <el-image :src="require('../../assets/home_images/like.png')" class="comment-icon" />
-              <span>191</span>
-            </span>
+          <div class="icons">
+            <el-image v-if="!item.collectState" :src="require('../../assets/home_images/collect0.png')" class="comment-icon" />
+            <el-image v-else :src="require('../../assets/home_images/collection.png')" class="comment-icon"  />
+            <span class="count">{{item.collectNum}}</span>
+            <el-image :src="require('../../assets/home_images/comment.png')" class="comment-icon" />
+            <span class="count">{{item.commentNum}}</span>
+            <el-image v-if="!item.likeState" :src="require('../../assets/home_images/like0.png')" class="comment-icon"/>
+            <el-image v-else :src="require('../../assets/home_images/like.png')" class="comment-icon" />
+            <span class="count">{{item.likeNum}}</span>
           </div>
         </div>
       </div>
-      <div class="hot-topics">
-        <div class="hot-topic-title">Hot topics</div>
-        <div v-for="(item, index) in hotTopics" :key="index" class="hot-topic-item">
-         {{index+1}}. {{item.title}}
+      <div style="width: 30%">
+        <div class="user-info">
+          <div v-if="!isLogin">
+            <div class="login-tips">Login to find more...</div>
+            <el-button @click="handleLogin">click here</el-button>
+          </div>
+          <div v-else style="position:relative;">
+            <el-button class="edit-btn" type="text" @click="userCenter">user center</el-button>
+            <div>
+              <el-image :src="require(`../../assets/home_images/${userInfo.avatar}.png`)" class="avatar" />
+            </div>
+            <div class="user-name">{{userInfo.userName}}</div>
+            <div class="statistic">
+              <div class="collection">
+                <el-image :src="require('../../assets/home_images/collection.png')" class="icon" />
+                <div>{{userData.collectNum}}</div>
+              </div>
+              <div class="comment">
+                <el-image :src="require('../../assets/home_images/comment.png')" class="icon" />
+                <div>{{userData.commentNum}}</div>
+              </div>
+              <div class="like">
+                <el-image :src="require('../../assets/home_images/like.png')" class="icon" />
+                <div>{{userData.likeNum}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hot-topics">
+          <div class="hot-topic-title">Hot topics</div>
+          <div v-for="(item, index) in hotTopics" :key="index" class="hot-topic-item">
+            {{index+1}}. {{item.topicName}}
+          </div>
         </div>
       </div>
     </div>
@@ -86,6 +79,8 @@
 </template>
 
 <script>
+import { getUserInfo, getUserData } from "@/api/user";
+import { getTopicByCollected, getTopicByLike, getTopicByComment, getLatestTopic, getHotTopic, getTopicByName } from '@/api/TopicInfo'
 import LoginPage from "./components/LoginPage";
 export default {
   name: "HomePage",
@@ -97,61 +92,127 @@ export default {
       isLogin: false,
       showLogin: false,
       topicName: '',
-      recommendTopics: [
-          { id: 1, name: 'Google Maps, AR wayfindingGoogle Maps, AR wayfindingGoogle Maps, AR wayfinding' },
-          { id: 1, name: 'Google Maps, AR wayfinding' },
-          { id: 1, name: 'Google Maps, AR wayfinding' },
-          { id: 1, name: 'Google Maps, AR wayfinding' },
-          { id: 1, name: 'Google Maps, AR wayfinding' },
-          { id: 1, name: 'Google Maps, AR wayfinding' }
-      ],
+      pageNum: 1,
+      pageSize: 10,
+      total: 0,
       userInfo:{
-        avatar: 'man',
-        userName: 'Alex',
-        collections: 10,
-        comments: 20,
-        like: 3
+        "role": "user",
+        "uid": 1,
+        "userName": "apitestUser",
+        "password": "abc123",
+        "email": "948936249@qq.com",
+        "address": "Auatralia",
+        "phoneNumber": "110",
+        "hobby": "唱跳，rap，篮球",
+        "avatar": "man",
+      },
+      userData: {
+        collectNum: 2,
+        commentNum: 3,
+        likeNum: 2
       },
       topicInfo: [
         {
-          userName: 'Alex',
-          avatar: 'woman',
-          title: 'Title Title Title Title Title Title Title Title',
-          time: '2022-09-12',
-          describe: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.'
-        },
-        {
-          userName: 'Bob',
           avatar: 'man',
-          title: 'Title Title Title Title Title Title Title Title',
-          time: '2022-09-12',
-          describe: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.'
+          "topicId": 23,
+          "topicName": "save topic api test",
+          "content": "test 123",
+          "createTime": "2022-10-12T05:18:47.000+00:00",
+          "updateTime": "",
+          "pmId": 1,
+          "pmName": "apitestpm",
+          "collectNum": 0,
+          "collectState": false,
+          "commentNum": 0,
+          "likeNum": 0,
+          "likeState": false,
+          "images": [
+            "/pic1.png",
+            "/pic2.png"
+          ]
         },
         {
-          userName: 'Lisa',
-          avatar: 'woman',
-          title: 'Title Title Title Title Title Title Title Title',
-          time: '2022-09-12',
-          describe: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.'
-        },
-        {
-          userName: 'petter',
           avatar: 'man',
-          title: 'Title Title Title Title Title Title Title Title',
-          time: '2022-09-12',
-          describe: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.'
+          "topicId": 22,
+          "topicName": "save topic api test",
+          "content": "test 123",
+          "createTime": "2022-10-12T05:17:31.000+00:00",
+          "updateTime": "",
+          "pmId": 1,
+          "pmName": "apitestpm",
+          "collectNum": 0,
+          "collectState": false,
+          "commentNum": 0,
+          "likeNum": 1,
+          "likeState": true,
+          "images": []
         }
       ],
 
       hotTopics: [
-        { id: 1, title: 'topic1' },
-        { id: 2, title: 'topic2' },
-        { id: 3, title: 'topic3' },
-        { id: 4, title: 'topic4' },
-        { id: 5, title: 'topic5' },
-        { id: 6, title: 'topic6' },
-        { id: 7, title: 'topic7' },
-        { id: 8, title: 'topic8' },
+        {
+          "topicId": 2,
+          "topicName": "The best way to study2",
+          "content": "read mroe, listen more and speak more!",
+          "createTime": "2022-01-20T03:11:11.000+00:00",
+          "updateTime": "",
+          "pmId": 1,
+          "pmName": "",
+          "collectNum": 1,
+          "collectState": false,
+          "commentNum": 3,
+          "likeNum": 1,
+          "likeState": false,
+          "images": [
+            "/pic1.png",
+            "/pic2.png"
+          ]
+        },
+        {
+          "topicId": 1,
+          "topicName": "The best way to study",
+          "content": "read mroe, listen more and speak more!",
+          "createTime": "2022-01-19T02:15:00.000+00:00",
+          "updateTime": "",
+          "pmId": 1,
+          "pmName": "",
+          "collectNum": 1,
+          "collectState": false,
+          "commentNum": 0,
+          "likeNum": 0,
+          "likeState": false,
+          "images": []
+        },
+        {
+          "topicId": 8,
+          "topicName": "save topic test",
+          "content": "test is successful",
+          "createTime": "2022-10-11T01:22:01.000+00:00",
+          "updateTime": "",
+          "pmId": 1,
+          "pmName": "",
+          "collectNum": 0,
+          "collectState": false,
+          "commentNum": 0,
+          "likeNum": 0,
+          "likeState": false,
+          "images": []
+        },
+        {
+          "topicId": 13,
+          "topicName": "save topic api test",
+          "content": "test 123",
+          "createTime": "2022-10-11T01:40:03.000+00:00",
+          "updateTime": "",
+          "pmId": 1,
+          "pmName": "",
+          "collectNum": 0,
+          "collectState": false,
+          "commentNum": 0,
+          "likeNum": 0,
+          "likeState": false,
+          "images": []
+        }
       ]
     }
   },
@@ -165,10 +226,46 @@ export default {
     userCenter() {
       this.$router.push('user-info')
     },
-    loginSuccess() {
+    async loginSuccess() {
+      const role = localStorage.getItem('role')
+      if(role=='pm') {
+       await this.$router.push('user-info')
+        return
+      }
       this.isLogin = true
       // get userInfo
-      // todo
+      try {
+        const res = await getUserInfo()
+        if(res.code==20011) {
+          this.userInfo = res.data
+        } else {
+          this.$message.error(res.msg)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+      try {
+        const res = await getUserData()
+        if(res.code==20011) {
+          this.userData = res.data
+        } else {
+          this.$message.error(res.msg)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
+
+    async searchTopic() {
+      this.pageNum = 1
+    },
+
+    async getLatest() {
+
+    },
+
+    async getRecommend() {
+
     },
 
     toDetails(item) {
@@ -179,24 +276,14 @@ export default {
 </script>
 
 <style scoped>
+div{
+  text-align: left;
+}
+.container{
+  font-size: 16px;
+}
 .navigation-bg{
   width: 100%;
-}
-.second-part{
-  display: flex;
-  justify-content: space-between;
-}
-.search-topic{
-  box-sizing: border-box;
-  width: 69%;
-  height: 280px;
-  padding: 20px 40px;
-  background-color: #FFF;
-}
-.search-title{
-  font-size: 24px;
-  font-weight: 600;
-  text-align: left;
 }
 .search-line{
   display: flex;
@@ -205,29 +292,12 @@ export default {
   width: 600px;
   margin-right: 20px;
 }
-.recommend-topics{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  width: 600px;
-}
-.recommend-item{
-  width: 49%;
-  margin-top: 20px;
-  color: #409EFF;
-  text-align: left;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  font-size: 20px;
-}
 .user-info{
-  width: 30%;
   height: 280px;
   background-color: #FFF;
   box-sizing: border-box;
   padding: 20px 20px 0 20px;
+  margin-bottom: 20px;
 }
 .edit-btn{
   position: absolute;
@@ -278,7 +348,6 @@ export default {
   box-sizing: border-box;
 }
 .hot-topics{
-  width: 30%;
   height: 600px;
   box-sizing: border-box;
   background-color: #FFFFFF;
@@ -299,12 +368,18 @@ export default {
 }
 .topic-des{
   display: inline-block;
-  width: 100px;
+  width: 500px;
+}
+.pm-name{
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 .topic-title{
+  font-size: 20px;
   text-align: left;
   padding-left: 20px;
   font-weight: 700;
+  margin-bottom: 10px;
 }
 .topic-content{
   text-align: left;
@@ -328,13 +403,23 @@ export default {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 .top-btn {
   height: 50px;
   line-height: 50px;
 }
+.icons{
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
 .comment-icon{
   width: 25px;
   height: 25px;
+}
+.count{
+  margin-right: 20px;
+  margin-left: 5px;
 }
 </style>

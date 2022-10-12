@@ -1,105 +1,100 @@
 import request from "@/utils/request";
 
-export function signInAction(data) {
+export function userLogin(params) {
     return request({
         url: 'users/login',
-        method: 'post',
-        data
-    })
-}
-
-export function signUpAction(data) {
-    return request({
-        url: 'users/signup',
-        method: 'post',
-        data
-    })
-}
-
-export function addReview(data) {
-    return request({
-        url: 'phone/addReview',
-        method: 'post',
-        data
-    })
-}
-
-export function updateProfile(data) {
-    return request({
-        url: 'users/profile/update',
-        method: 'post',
-        data
-    })
-}
-
-export function changePasswprd(data) {
-
-    return request({
-        url: 'users/profile/changepassword',
-        method: 'post',
-        data
-    })
-}
-
-export function findAssociatedPhone(data) {
-
-    return request({
-        url: 'phone/findAssociatedPhone',
         method: 'get',
-        data
+        params
     })
 }
 
-export function addNewPhone(data) {
+// get the information of users
+export function getUserInfo() {
     return request({
-        url: 'phone/addNewPhone',
+        url: `/users/profile`,
+        method: 'get',
+    })
+}
+
+export function getUserData() {
+    return request({
+        url: `/topics/user/data`,
+        method: 'get',
+    })
+}
+
+export function getTopicByCollected() {
+    return request({
+        url: `users/data/collect`,
+        method: 'get',
+    })
+}
+
+export function getTopicByLiked() {
+    return request({
+        url: `users/data/like`,
+        method: 'get',
+    })
+}
+
+export function getTopicByComment() {
+    return request({
+        url: `users/data/comment`,
+        method: 'get',
+    })
+}
+
+export function userRegister(data) {
+    return request({
+        url: `users/register`,
         method: 'post',
         data
     })
 }
 
-export function deletePhone(data) {
+
+// pm login
+export function pmLogin(params) {
     return request({
-        url: 'phone/deletePhone',
+        url: 'pm/login',
+        method: 'get',
+        params
+    })
+}
+
+export function pmRegister(data) {
+    return request({
+        url: `pm/register`,
         method: 'post',
         data
     })
 }
 
-export function setEnabled(data) {
+export function getPmInfo() {
     return request({
-        url: 'phone/setEnabled',
+        url: `/pm/profile`,
+        method: 'get',
+    })
+}
+
+export function createTopic(data) {
+    return request({
+        url: 'pm/topic',
         method: 'post',
         data
     })
 }
 
-export function setDisabled(data) {
+export function deleteTopic(data) {
     return request({
-        url: 'phone/setDisabled',
-        method: 'post',
-        data
+        url: `pm/topic/${data.id}`,
+        method: 'delete',
     })
 }
 
-export function forgetPassword(data) {
+export function getTopicDataByPm() {
     return request({
-        url: 'users/forgetpassword',
-        method: 'post',
-        data
+        url: `pm/topic/data`,
+        method: 'get',
     })
 }
-
-export function resetPassword(data) {
-    return request({
-        url: 'users/resetpassword',
-        method: 'post',
-        data
-    })
-}
-
-
-
-
-
-
