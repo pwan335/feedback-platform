@@ -13,6 +13,11 @@
     </div>
     <div class="topic-title">{{itemInfo.topicName}}</div>
     <div class="topic-content">{{itemInfo.content}}</div>
+    <div class="images">
+      <span v-for="(item ,index) in itemInfo.images" :key="index">
+        <el-image class="topic-image" :src="formatUrl(item)" :preview-src-list="[formatUrl(item)]" />
+      </span>
+    </div>
     <div class="operation">
       <div class="comment-input">
         <el-input v-model="comment" placeholder="write your opinion here" type="textarea" :rows="2" />
@@ -163,6 +168,7 @@ export default {
     let info = localStorage.getItem('target')
     if(info) {
       this.itemInfo = JSON.parse(info)
+      this.itemInfo.images=['/a3dffd5eb6a5858c7f235fcef8ab0156.jpeg', '/a3dffd5eb6a5858c7f235fcef8ab0156.jpeg', '/a3dffd5eb6a5858c7f235fcef8ab0156.jpeg']
       this.getCommentsList()
     }
     let userInfo = localStorage.getItem('userInfo')
@@ -387,6 +393,12 @@ div{
   font-size: 20px;
   font-weight: 700;
   margin: 15px 0 10px 0;
+}
+.topic-image{
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  margin-right: 20px;
 }
 .operation{
   margin-top: 30px;
