@@ -1,10 +1,10 @@
 import request from "@/utils/request";
 
-export function userLogin(params) {
+export function userLogin(data) {
     return request({
         url: 'users/login',
-        method: 'get',
-        params
+        method: 'post',
+        data
     })
 }
 
@@ -13,6 +13,7 @@ export function getUserInfo() {
     return request({
         url: `/users/profile`,
         method: 'get',
+        headers: {'Content-Type': 'application/json ;charset=utf-8'}
     })
 }
 
@@ -23,6 +24,41 @@ export function getUserData() {
     })
 }
 
+export function updateUserInfo(data) {
+    return request({
+        url: `/users/profile`,
+        method: 'put',
+        data
+    })
+}
+
+export function updatePassword(data) {
+    return request({
+        url: `/users/password/change`,
+        method: 'put',
+        data
+    })
+}
+
+export function verifyOldPw(data) {
+    return request({
+        url: `/users/password/verify`,
+        method: 'post',
+        data
+    })
+}
+
+export function updateAvatar(data) {
+    return request({
+        url: `/users/image/save`,
+        method: 'post',
+        data,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
+
 export function getTopicByCollected() {
     return request({
         url: `users/data/collect`,
@@ -30,7 +66,7 @@ export function getTopicByCollected() {
     })
 }
 
-export function getTopicByLiked() {
+export function getTopicByLike() {
     return request({
         url: `users/data/like`,
         method: 'get',
@@ -47,6 +83,14 @@ export function getTopicByComment() {
 export function userRegister(data) {
     return request({
         url: `users/register`,
+        method: 'post',
+        data
+    })
+}
+
+export function resetPassword(data) {
+    return request({
+        url: `/users/password/forget`,
         method: 'post',
         data
     })

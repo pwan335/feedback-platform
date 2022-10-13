@@ -1,13 +1,14 @@
 <template>
   <div class="container">
-    <div class="go-back">
-      <el-button @click="goBack">back</el-button>
+    <div class="go-back"  @click="goBack">
+      <span class="el-icon-arrow-left"></span>
+      <span class="back-text">back</span>
     </div>
     <div class="line1">
-      <el-image :src="require(`../../assets/home_images/${itemInfo.photo}.png`)" class="avatar" />
+      <el-image :src="formatUrl(itemInfo.pmAvatar)" class="avatar" />
       <div>
         <div class="user-name">{{itemInfo.pmName}}</div>
-        <div class="topic-time">{{itemInfo.createTime}}</div>
+        <div class="topic-time">{{formatTime(itemInfo.createTime)}}</div>
       </div>
     </div>
     <div class="topic-title">{{itemInfo.topicName}}</div>
@@ -30,34 +31,36 @@
     </div>
     <el-divider />
     <div class="comment-box">
-      <div>comments</div>
+      <div class="comment-title">comments</div>
       <div v-for="(item, index) in commentsList" :key="index">
         <div class="line1">
-          <el-image :src="require(`../../assets/home_images/${itemInfo.photo}.png`)" class="avatar" />
+          <el-image :src="formatUrl(item.userAvatar)" class="avatar" />
           <div>
-            <div class="user-name">{{item.username}}</div>
+            <div class="user-name">{{item.userName}}</div>
           </div>
         </div>
         <div class="comment-content">{{item.content}}</div>
         <div class="comment-time">
-          {{item.createTime}}
+          {{formatTime(item.createTime)}}
           <span class="reply-btn" @click="addReply(0, item)">reply</span>
         </div>
         <div class="reply-comment">
           <div class="reply-item" v-for="(reply, indicate) in item.replyList" :key="indicate">
-            <div v-if="reply.toUname==item.username">{{reply.content}}</div>
+            <div v-if="reply.toUname==item.userName">{{reply.content}}</div>
             <div v-else>
               <span class="form-user">{{reply.fromUname}}</span>  Reply to <span class="to-user">@ {{reply.toUname}}: </span> {{reply.content}}
             </div>
             <div class="reply-time">
-              {{reply.createTime}}
-              <span v-if="reply.toUname==item.username" class="reply-btn" @click="addReply(1, reply)">reply</span>
+              {{formatTime(reply.createTime)}}
+              <span v-if="reply.toUname==item.userName && reply.fromUname!==userInfo.userName" class="reply-btn" @click="addReply(1, reply)">reply</span>
             </div>
           </div>
         </div>
         <el-divider />
       </div>
     </div>
+
+    <div v-if="total>commentsList.length" @click="loadMore" class="load-more">load more >></div>
 
     <!--comment popup-->
     <el-dialog :visible.sync="showPop" title="comment">
@@ -71,6 +74,8 @@
 
 <script>
 import { collectTopic, deleteCollect, likeTopic, deleteLike, getComments, postComments, postTreeComments } from '@/api/TopicInfo'
+import { getImageHost, utc2beijing } from "@/utils";
+
 export default {
   name: "TopicDetails",
   data() {
@@ -80,18 +85,10 @@ export default {
       replyType: 0,
       replyTarget: null,
       comment: '',
-      itemInfo: {
-        photo: 'man',
-        pmName: 'Alex',
-        topicName: 'dvksv lk',
-        createTime: '2022-10-01',
-        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.',
-        collectNum: 1,
-        collectState: false,
-        commentNum: 3,
-        likeNum: 1,
-        likeState: false
-      },
+      pageNum: 1,
+      pageSize: 3,
+      total: 0,
+      itemInfo: {},
       commentsList: [
         {
           "id": 3,
@@ -158,20 +155,43 @@ export default {
           ]
         }
       ],
-      commentTarget: ''
+      commentTarget: '',
+      userInfo: {},
+    }
+  },
+  created() {
+    let info = localStorage.getItem('target')
+    if(info) {
+      this.itemInfo = JSON.parse(info)
+      this.getCommentsList()
+    }
+    let userInfo = localStorage.getItem('userInfo')
+    if(userInfo) {
+      this.userInfo = JSON.parse(userInfo)
     }
   },
   methods: {
+    formatUrl(url) {
+      return getImageHost() + url
+    },
+
+    formatTime(time) {
+      return utc2beijing(time)
+    },
+
     goBack() {
       this.$router.go(-1)
     },
 
+    loadMore() {
+      this.pageNum += 1
+      this.getCommentsList(true)
+    },
+
     async postCollect() {
-      this.$set(this.itemInfo, 'collectState', true)
-      this.$set(this.itemInfo, 'collectNum', this.itemInfo.collectNum+1)
       try {
         const res = await collectTopic({topicId: this.itemInfo.topicId})
-        if(res.code=='20021') {
+        if(res.code==20021) {
           this.$set(this.itemInfo, 'collectState', true)
           this.$set(this.itemInfo, 'collectNum', this.itemInfo.collectNum+1)
         } else {
@@ -182,11 +202,9 @@ export default {
       }
     },
     async postLike() {
-      this.$set(this.itemInfo, 'likeState', true)
-      this.$set(this.itemInfo, 'likeNum', this.itemInfo.likeNum+1)
       try {
         const res = await likeTopic({topicId: this.itemInfo.topicId})
-        if(res.code=='20021') {
+        if(res.code==20021) {
           this.$set(this.itemInfo, 'likeState', true)
           this.$set(this.itemInfo, 'likeNum', this.itemInfo.likeNum+1)
         } else {
@@ -197,11 +215,9 @@ export default {
       }
     },
     async deleteCollect() {
-      this.$set(this.itemInfo, 'collectState', false)
-      this.$set(this.itemInfo, 'collectNum', this.itemInfo.collectNum-1)
       try {
         const res = await deleteCollect({topicId: this.itemInfo.topicId})
-        if(res.code=='20021') {
+        if(res.code==20031) {
           this.$set(this.itemInfo, 'collectState', false)
           this.$set(this.itemInfo, 'collectNum', this.itemInfo.collectNum-1)
         } else {
@@ -212,11 +228,9 @@ export default {
       }
     },
     async deleteLike() {
-      this.$set(this.itemInfo, 'likeState', false)
-      this.$set(this.itemInfo, 'likeNum', this.itemInfo.likeNum-1)
       try {
         const res = await deleteLike({topicId: this.itemInfo.topicId})
-        if(res.code=='20021') {
+        if(res.code==20031) {
           this.$set(this.itemInfo, 'likeState', false)
           this.$set(this.itemInfo, 'likeNum', this.itemInfo.likeNum-1)
         } else {
@@ -227,11 +241,19 @@ export default {
       }
     },
 
-    async getCommentsList() {
+    async getCommentsList(loadMore) {
+      if(loadMore!==true) {
+        this.pageNum = 1
+      }
       try {
-        const res = await getComments({id: this.itemInfo.topicId})
-        if(res.code==='20011') {
-          this.commentsList = res.data
+        const res = await getComments({topicId: this.itemInfo.topicId, pageNum: this.pageNum, pageSize: this.pageSize})
+        if(res.code===20011) {
+          if(loadMore!==true) {
+            this.commentsList = res.data.list
+          } else {
+            this.commentsList = this.commentsList.concat(res.data.list)
+          }
+          this.total = res.data.total
         } else {
           this.$message.error(res.msg)
         }
@@ -248,7 +270,9 @@ export default {
       const reqModel = { topicId: this.itemInfo.topicId, content: this.comment }
       try {
         const res = await postComments(reqModel)
-        if(res.code=='20021') {
+        if(res.code==20021) {
+          this.$message.success('comment successfully')
+          this.comment = ''
           await this.getCommentsList()
         } else {
           this.$message.error(res.msg)
@@ -264,24 +288,47 @@ export default {
         this.$message.warning('please enter your comment')
         return
       }
-      let reqModel = {
-        "commentId": this.replyTarget.id,
-        "toRole": this.replyTarget.role,
-        "toUid": this.replyTarget.uid,
-        "replyType": "comment",
-        "replyId": 3,
-        "content": this.replyContent
-      }
       if(this.replyType==0) {
-
-      } else {
-        reqModel = {
-          "commentId": 4,
-          "toRole": "user",
-          "toUid": 1,
-          "replyType": "reply",
+        let reqModel = {
+          "commentId": this.replyTarget.id,
+          "toRole": this.replyTarget.role,
+          "toUid": this.replyTarget.uid,
+          "replyType": "comment",
           "replyId": 3,
           "content": this.replyContent
+        }
+        try {
+          const res = await postTreeComments(reqModel)
+          if(res.code === 20021) {
+            this.$message.success('comment successfully')
+            await this.getCommentsList()
+            this.closePopup()
+          } else {
+            this.$message.error(res.msg)
+          }
+        } catch (err) {
+          console.log(err)
+        }
+      } else {
+        let reqModel = {
+          "commentId": this.replyTarget.commentId,
+          "toRole": this.replyTarget.fromRole,
+          "toUid": this.replyTarget.fromUid,
+          "replyType": "reply",
+          "replyId": this.replyTarget.replyId,
+          "content": this.replyContent
+        }
+        try {
+          const res = await postTreeComments(reqModel)
+          if(res.code === 20021) {
+            this.$message.success('comment successfully')
+            await this.getCommentsList()
+            this.closePopup()
+          } else {
+            this.$message.error(res.msg)
+          }
+        } catch (err) {
+          console.log(err)
         }
       }
     },
@@ -293,6 +340,8 @@ export default {
     },
     closePopup() {
       this.showPop = false
+      this.replyTarget = null
+      this.replyContent = ''
      }
   }
 }
@@ -320,6 +369,9 @@ div{
 .avatar{
   height: 80px;
   width: 80px;
+  border-radius: 40px;
+  border: 1px solid #e0e0e0;
+  margin-right: 10px;
 }
 .user-name{
   font-weight: 700;
@@ -401,5 +453,22 @@ div{
 }
 .el-divider--horizontal{
   height: 0.5px;
+}
+.load-more{
+  cursor: pointer;
+  color: #409EFF;
+  text-align: center;
+  margin-top: 10px;
+}
+.go-back{
+  cursor: pointer;
+}
+.back-text{
+  color: #409EFF;
+}
+.comment-title{
+  font-size: 24px;
+  font-weight: 700;
+  margin: 20px 0;
 }
 </style>

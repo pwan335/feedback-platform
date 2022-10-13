@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import {forgetPassword, pmLogin, userRegister, userLogin, pmRegister} from "@/api/user";
+import {resetPassword, pmLogin, userRegister, userLogin, pmRegister} from "@/api/user";
 import md5 from 'js-md5'
 import {validPassword} from "@/utils";
 
@@ -82,9 +82,6 @@ export default {
 
 
     }
-  },
-  created () {
-    console.log(md5('Mcqbq1ep'))
   },
   computed: {
     btnText() {
@@ -175,12 +172,15 @@ export default {
         inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
         inputErrorMessage: 'Invalid Email'
       }).then(({ value }) => {
-        // this.$message({
-        //   type: 'success',
-        //   message: 'Your email is:' + value
-        // });
-        this.verEmail = value;
-        this.verifyEmail(value);
+        resetPassword({email: value}).then(res=>{
+          if(res.code === 20041) {
+            this.$message.success('Get new password successfully, please go to your mailbox to check')
+          } else {
+            this.$message.error(res.msg)
+          }
+        }, err=>{
+          console.log(err)
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -241,6 +241,10 @@ export default {
             this.$message.success('Sign up successfully! Go to verify!');
             this.showLogin = true;
             this.showSignUp = false;
+            this.userName = ''
+            this.newEmail = ''
+            this.newPassword = ''
+            this.confirmPassword = ''
           }else{
             this.$message.error(res.msg);
           }
@@ -259,6 +263,11 @@ export default {
             this.$message.success('Sign up successfully! Go to verify!');
             this.showLogin = true;
             this.showSignUp = false;
+            this.userName = ''
+            this.newEmail = ''
+            this.newPassword = ''
+            this.confirmPassword = ''
+            this.company = ''
           }else{
             this.$message.error(res.msg);
           }
@@ -287,6 +296,7 @@ export default {
 }
 
 .login{
+  text-align: center;
   width: 100%;
   height: auto;
   min-height: 560px;
@@ -302,6 +312,7 @@ export default {
   background: url("../../../assets/loginPage_images/email.png") no-repeat;
   background-size: 32px 32px;
   background-position: 3%;
+  margin-bottom: 20px;
 }
 .password {
   background: url("../../../assets/loginPage_images/password.png") no-repeat;
@@ -320,6 +331,7 @@ export default {
   height: 100%;
 }
 .login_btn {
+  margin-top: 20px;
   margin-left: 5%;
   width: 50%;
   font-size: 16px;

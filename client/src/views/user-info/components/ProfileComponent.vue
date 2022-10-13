@@ -6,20 +6,25 @@
         <span>Update your profile here</span>
       </div>
     </div>
-    <el-form ref="profile" :model="profile" label-width="80px">
-      <el-form-item class="form_item" label="First name">
+    <el-form ref="profile" :model="profile" label-width="130px">
+      <el-form-item class="form_item" label="userName">
         <el-col :span="10">
-          <el-input v-model="profile.firstname"></el-input>
+          <el-input v-model="profile.userName"></el-input>
         </el-col>
       </el-form-item>
-      <el-form-item class="form_item" label="Last name">
+      <el-form-item class="form_item" label="address">
         <el-col :span="10">
-          <el-input v-model="profile.lastname"></el-input>
+          <el-input v-model="profile.address"></el-input>
         </el-col>
       </el-form-item>
-      <el-form-item class="form_item" label="Email">
+      <el-form-item class="form_item" label="phoneNumber">
         <el-col :span="10">
-          <el-input v-model="profile.email"></el-input>
+          <el-input v-model="profile.phoneNumber"></el-input>
+        </el-col>
+      </el-form-item>
+      <el-form-item class="form_item" label="hobby">
+        <el-col :span="10">
+          <el-input v-model="profile.hobby"></el-input>
         </el-col>
       </el-form-item>
       <el-form-item class="form_btn">
@@ -30,108 +35,78 @@
 </template>
 
 <script>
-import {updateProfile} from "@/api/user";
+import { updateUserInfo } from "@/api/user";
 import md5 from "js-md5";
 
 export default {
   name: 'ProfileComponent',
   data() {
     return {
-      profile: {}
+      profile: {
+        userName: '',
+        address: '',
+        phoneNumber: '',
+        hobby: '',
+      }
     }
   },
   created() {
-    // this.loadUser();
-    const user = sessionStorage.getItem('user')
+    const user = localStorage.getItem('userInfo')
     if(user) {
-      console.log(JSON.parse(user));
       this.profile = JSON.parse(user);
     }
-    console.log(user)
   },
   methods: {
     loadUser(){
-      const user = sessionStorage.getItem('user')
+      const user = localStorage.getItem('userInfo')
       if(user) {
-        console.log(JSON.parse(user));
         this.profile = JSON.parse(user);
       }
-      console.log(user)
     },
-    onSubmit() {
-      if (!this.profile.firstname) {
-        this.$message.error('Please input your first name');
+    async onSubmit() {
+      if (!this.profile.userName) {
+        this.$message.error('Please enter userName');
         return;
       }
-      if (!this.profile.lastname) {
-        this.$message.error('Please input your last name');
+      if (!this.profile.address) {
+        this.$message.error('Please enter address');
         return;
       }
 
-      if (!this.profile.email) {
-        this.$message.error('Please input your email');
+      if (!this.profile.phoneNumber) {
+        this.$message.error('Please enter phoneNumber');
         return;
       }else{
-        var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
-        if(!regEmail.test(this.profile.email)){
+        var regEmail = /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/
+        if(!regEmail.test(this.profile.phoneNumber)){
           this.$message({
-            message: 'The email format is incorrect',
+            message: 'The phoneNumber format is incorrect',
             type: 'error'
           })
-          this.loadUser();
-          // let oldUser = sessionStorage.getItem('user');
-          // oldUser = JSON.parse(oldUser);
-          // this.profile.email = oldUser.email;
           return;
         }
       }
-
-      this.$prompt('Please input your password', {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
-        inputPattern: /\S/,
-        inputErrorMessage: 'Error: can not be null',
-        inputType: 'password'
-      }).then(({ value }) => {
-        const newProfile = {
-          "firstname": this.profile.firstname,
-          "lastname": this.profile.lastname,
-          "email": this.profile.email,
-          "password": md5(value)
-        };
-        console.log(newProfile)
-        updateProfile(newProfile).then(res=>{
-          console.log(res)
-          if(res.success){
-            let oldUser = sessionStorage.getItem('user');
-            let newUser = res.data;
-            oldUser = JSON.parse(oldUser);
-            // console.log(oldUser);
-            oldUser.firstname = newUser.firstname;
-            oldUser.lastname = newUser.lastname;
-            oldUser.email = newUser.email;
-            sessionStorage.setItem('user', JSON.stringify(oldUser))
-            this.$emit('updateUser')
-            this.$message.success('Update your profile successfully!');
-          }else{
-            this.$message.error(res.message);
-            this.loadUser();
-          }
-          // this.$emit('updateProfile', res.user);
-        },err=>{
-          console.log(err);
-        });
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: 'Input canceled'
-        });
-        // let oldUser = sessionStorage.getItem('user');
-        // oldUser = JSON.parse(oldUser);
-        this.loadUser();
-
-      });
-      // console.log("submit!");
+      if (!this.profile.hobby) {
+        this.$message.error('Please enter hobby');
+        return;
+      }
+      try {
+        let reqModel = {
+          "userName": this.profile.userName,
+          "address": this.profile.address,
+          "phoneNumber": this.profile.phoneNumber,
+          "hobby": this.profile.hobby
+        }
+        const res = await updateUserInfo(reqModel)
+        if(res.code===20041) {
+          this.$message.success('update successfully')
+           localStorage.setItem('userInfo', JSON.stringify(this.profile))
+        } else {
+          this.$message.error(res.msg)
+        }
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }

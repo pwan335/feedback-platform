@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import {changePasswprd} from "@/api/user";
+import { updatePassword } from "@/api/user";
 import {validPassword} from "@/utils";
 import md5 from 'js-md5'
 
@@ -57,18 +57,18 @@ export default {
       }
 
       const password = {
-        "oldPassword": md5(this.oldPassword),
-        "newPassword": md5(this.newPassword)
+        "password": md5(this.oldPassword),
+        "newPwd": md5(this.newPassword)
       }
-      changePasswprd(password).then(res => {
-        if (res.success) {
+      updatePassword(password).then(res => {
+        if (res.code==20041) {
           this.$message.success('Change your password successfully!');
           this.oldPassword = '';
           this.newPassword = '';
+          this.$emit('logOut')
         } else {
-          this.$message.error(res.message);
+          this.$message.error(res.msg);
         }
-        console.log(res);
       }, err => {
         console.log(err);
       });

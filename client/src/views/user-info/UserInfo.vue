@@ -1,24 +1,26 @@
 <template>
   <div class="container">
-    <div class="backHome_btn">
-      <el-button type="danger" size="small" plain @click="backHome">Back home</el-button>
-    </div>
     <div class="userInfo-container">
+      <div class="home" @click="backHome">
+        <span class="el-icon-arrow-left"></span>
+        <span class="back-text">home</span>
+      </div>
       <div class="item-list">
+        <el-image class="avatar" :src="formatUrl(userInfo.avatar)" @click="showPop=true"></el-image>
         <span :class="['item', activetedIndex==1?'item-activated':'']" @click="showForm(1)">Edit Profile</span>
         <span :class="['item', activetedIndex==2?'item-activated':'']" @click="showForm(2)">Change Password</span>
-        <span :class="['item', activetedIndex==3?'item-activated':'']" @click="showForm(3)">Manage Page</span>
-        <span :class="['item', activetedIndex==4?'item-activated':'']" @click="showForm(4)">Topic Edition</span>
+        <span v-if="userInfo.role!=='user'" :class="['item', activetedIndex==3?'item-activated':'']" @click="showForm(3)">Manage Page</span>
+        <span v-if="userInfo.role!=='user'" :class="['item', activetedIndex==4?'item-activated':'']" @click="showForm(4)">Topic Edition</span>
+        <span v-if="userInfo.role=='user'" :class="['item', activetedIndex==5?'item-activated':'']" @click="showForm(5)">Relative Topic</span>
         <div class="signOut_btn">
           <el-button type="danger" size="small" plain @click="signOut">Sign-out</el-button>
         </div>
-
       </div>
       <div class="detail" v-if="showProfile">
         <profile-component @updateUser="updateUser"/>
       </div>
       <div class="detail" v-if="showPassword">
-        <password-component />
+        <password-component @logOut="signOut" />
       </div>
       <div class="detail" v-if="showManage">
         <manage-component />
@@ -26,7 +28,23 @@
       <div class="detail" v-if="showTopic">
         <topic-component />
       </div>
+      <div class="detail" v-if="showRelative">
+        <relative-topic />
+      </div>
     </div>
+    <el-dialog width="350px" :visible.sync="showPop" title="Update Avatar" :close-on-click-modal="false" :before-close="closeDialog">
+      <el-upload
+          class="avatar-uploader"
+          action=""
+          :show-file-list="false"
+          :auto-upload="false"
+          :on-change="handleChange"
+          :on-remove="handleRemove">
+        <img v-if="imageUrl" :src="imageUrl" class="new-avatar">
+        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+      </el-upload>
+      <el-button type="primary" @click="changeAvatar" class="confirm-btn">confirm</el-button>
+    </el-dialog>
   </div>
 </template>
 
@@ -35,6 +53,9 @@ import ProfileComponent from "@/views/user-info/components/ProfileComponent";
 import PasswordComponent from "@/views/user-info/components/PasswordComponent";
 import ManageComponent from "@/views/user-info/components/ManageComponent";
 import TopicComponent from "@/views/user-info/components/TopicComponent";
+import RelativeTopic from "@/views/user-info/components/RelativeTopic";
+import {getImageHost} from "@/utils";
+import { updateAvatar } from "@/api/user";
 
 export default {
   name: "UserInfo",
@@ -42,7 +63,8 @@ export default {
     PasswordComponent,
     ProfileComponent,
     ManageComponent,
-    TopicComponent
+    TopicComponent,
+    RelativeTopic
   },
   data() {
     return {
@@ -50,18 +72,64 @@ export default {
       showPassword: false,
       showManage: false,
       showTopic: false,
-      activetedIndex: 1
+      showRelative: false,
+      activetedIndex: 1,
+      userInfo: {},
+      showPop: false,
+      imageUrl: '',
+      file: '',
     }
   },
   created() {
-    const user = sessionStorage.getItem('user')
-    if(!user) {
-      this.$message.warning('Please log in first')
-      // 返回登录页, 登录成功后返回首页
-      // todo
+    let userInfo = localStorage.getItem('userInfo')
+    if(userInfo) {
+      this.userInfo = JSON.parse(userInfo)
     }
   },
   methods:{
+    async changeAvatar() {
+      if(!this.file) {
+        this.$message.warning('please choose your avatar first')
+        return
+      }
+      let formData = new FormData()
+      formData.append('file', this.file.raw)
+      try {
+        const res = await updateAvatar(formData)
+        if(res.code === 20021) {
+          this.$message.success('update successfully')
+          this.userInfo.avatar = res.data
+          localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
+          this.closeDialog()
+        } else {
+          this.$message.error(res.msg)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
+
+    closeDialog() {
+      this.showPop = false
+      this.file = ''
+      this.imageUrl = ''
+    },
+
+    handleRemove(file) {
+      console.log(file)
+    },
+
+    handleChange(file) {
+      if(file) {
+        this.file = file
+      }
+      this.imageUrl = URL.createObjectURL(file.raw)
+    },
+
+    formatUrl(url) {
+      return getImageHost() + url
+    },
+
     showForm(item){
       this.activetedIndex = item;
       if(item == 1){
@@ -69,25 +137,36 @@ export default {
         this.showPassword= false;
         this.showManage = false;
         this.showTopic = false;
+        this.showRelative = false
       }else if(item == 2){
         this.showProfile = false;
         this.showPassword= true;
         this.showManage = false;
         this.showTopic = false;
+        this.showRelative = false
       }else if(item == 3){
         this.showProfile = false;
         this.showPassword= false;
         this.showManage = true;
         this.showTopic = false;
+        this.showRelative = false
       }else if(item == 4){
         this.showProfile = false;
         this.showPassword= false;
         this.showManage = false;
+        this.showRelative = false
         this.showTopic = true;
+      }else if(item == 5){
+        this.showProfile = false;
+        this.showPassword= false;
+        this.showManage = false;
+        this.showTopic = false;
+        this.showRelative = true
       }
     },
     signOut(){
       // 退出登录，返回首页
+      localStorage.clear()
       this.$router.go(-1)
     },
 
@@ -103,9 +182,34 @@ export default {
 }
 </script>
 
+<style>
+.avatar-uploader .el-upload {
+  border: 1px dashed #dcdcdc;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+</style>
 <style scoped>
-
+.new-avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 .userInfo-container {
+  position: relative;
   width: 100%;
   /*height: 680px;*/
   height: auto;
@@ -140,8 +244,7 @@ export default {
   /*height: 90%;*/
   height: auto;
   min-height: 680px;
-  padding-top: 5%;
-  padding-left: 8%;
+  padding: 30px;
   /*margin-bottom: 3%;*/
   background: white;
   box-sizing: border-box;
@@ -157,5 +260,24 @@ export default {
 .item-activated{
   color: #1482f0;
 }
-
+.avatar{
+  height: 120px;
+  width: 120px;
+  border: 1px solid #e0e0e0;
+  border-radius: 60px;
+  margin-bottom: 20px;
+}
+.confirm-btn{
+  margin-top: 20px;
+}
+.home{
+  font-size: 18px;
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  cursor: pointer;
+}
+.back-text{
+  color: #409EFF;
+}
 </style>

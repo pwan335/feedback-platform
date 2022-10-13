@@ -1,24 +1,27 @@
 import request from "@/utils/request";
 
 // search topic by name
-export function getTopicByName (params) {
+export function getTopicByName (data) {
     return request({
-        url: `/topics/name/${params.name}`,
-        method: 'get'
+        url: `/topics/name`,
+        method: 'post',
+        data
     })
 }
 
-export function getLatestTopic () {
+export function getLatestTopic (params) {
     return request({
         url: `/topics/latest`,
-        method: 'get'
+        method: 'get',
+        params
     })
 }
 
-export function getHotTopic () {
+export function getHotTopic (params) {
     return request({
         url: `/topics/hot`,
-        method: 'get'
+        method: 'get',
+        params
     })
 }
 
@@ -78,8 +81,9 @@ export function deleteLike (data) {
 // get comments
 export function getComments (params) {
     return request({
-        url: `/comments/${params.id}`,
+        url: `/comments/topicId`,
         method: 'get',
+        params
     })
 }
 

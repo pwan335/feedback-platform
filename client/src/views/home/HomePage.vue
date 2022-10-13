@@ -1,14 +1,19 @@
 <template>
   <div class="container">
     <div class="navigation">
+      <div class="weather">
+        <div>City: {{city}}</div>
+        <div>Weather: {{weather.temperature}}℃, {{weather.info}},  {{weather.direct}}</div>
+      </div>
+      <div class="web-title">Easy feedback</div>
       <el-image class="navigation-bg" :src="require('../../assets/home_images/bg.jpg')" />
     </div>
 
     <div class="third-part">
       <div class="topic-docker">
         <div class="search-line">
-          <el-input v-model="topicName" />
-          <el-button type="primary">Search</el-button>
+          <el-input v-model="topicName" clearable />
+          <el-button type="primary" @click="searchTopic">Search</el-button>
         </div>
         <div class="top-btn" v-show="isLogin">
           <el-button type="primary" size="mini" @click="getLatest">Latest</el-button>
@@ -16,10 +21,10 @@
         </div>
         <div class="topic-item" v-for="(item, index) in topicInfo" :key="index">
           <div class="line1">
-            <el-image :src="require(`../../assets/home_images/${item.avatar}.png`)" class="icon"  />
+            <el-image :src="formatUrl(item.pmAvatar)" class="avatar-icon"  />
             <div class="topic-des">
               <div class="pm-name">{{item.pmName}}</div>
-              <div>{{item.createTime}}</div>
+              <div>{{formatTime(item.createTime)}}</div>
             </div>
           </div>
           <div @click="toDetails(item)">
@@ -37,17 +42,20 @@
             <span class="count">{{item.likeNum}}</span>
           </div>
         </div>
+        <div class="load-more" v-if="total>topicInfo.length">
+          <span @click="loadMore">Load more >></span>
+        </div>
       </div>
       <div style="width: 30%">
         <div class="user-info">
-          <div v-if="!isLogin">
+          <div v-if="!isLogin" class="un-login">
             <div class="login-tips">Login to find more...</div>
             <el-button @click="handleLogin">click here</el-button>
           </div>
           <div v-else style="position:relative;">
             <el-button class="edit-btn" type="text" @click="userCenter">user center</el-button>
-            <div>
-              <el-image :src="require(`../../assets/home_images/${userInfo.avatar}.png`)" class="avatar" />
+            <div style="text-align: center">
+              <el-image :src="formatUrl(userInfo.avatar)" class="avatar" />
             </div>
             <div class="user-name">{{userInfo.userName}}</div>
             <div class="statistic">
@@ -68,7 +76,7 @@
         </div>
         <div class="hot-topics">
           <div class="hot-topic-title">Hot topics</div>
-          <div v-for="(item, index) in hotTopics" :key="index" class="hot-topic-item">
+          <div v-for="(item, index) in hotTopics" :key="index" class="hot-topic-item" @click="toDetails(item)">
             {{index+1}}. {{item.topicName}}
           </div>
         </div>
@@ -79,9 +87,14 @@
 </template>
 
 <script>
+import { getImageHost, utc2beijing } from "@/utils";
 import { getUserInfo, getUserData } from "@/api/user";
-import { getTopicByCollected, getTopicByLike, getTopicByComment, getLatestTopic, getHotTopic, getTopicByName } from '@/api/TopicInfo'
+import { getLatestTopic, getHotTopic, getTopicByName } from '@/api/TopicInfo'
 import LoginPage from "./components/LoginPage";
+
+import { getCityByIP } from "@/api/publicApi";
+import { weatherInfo } from "@/api/weather";
+
 export default {
   name: "HomePage",
   components: {
@@ -94,138 +107,81 @@ export default {
       topicName: '',
       pageNum: 1,
       pageSize: 10,
+      // 0 search 1 latest 2 recomment
+      getMode: 0,
       total: 0,
-      userInfo:{
-        "role": "user",
-        "uid": 1,
-        "userName": "apitestUser",
-        "password": "abc123",
-        "email": "948936249@qq.com",
-        "address": "Auatralia",
-        "phoneNumber": "110",
-        "hobby": "唱跳，rap，篮球",
-        "avatar": "man",
-      },
+      userInfo:{},
       userData: {
-        collectNum: 2,
-        commentNum: 3,
-        likeNum: 2
+        collectNum: 0,
+        commentNum: 0,
+        likeNum: 0
       },
-      topicInfo: [
-        {
-          avatar: 'man',
-          "topicId": 23,
-          "topicName": "save topic api test",
-          "content": "test 123",
-          "createTime": "2022-10-12T05:18:47.000+00:00",
-          "updateTime": "",
-          "pmId": 1,
-          "pmName": "apitestpm",
-          "collectNum": 0,
-          "collectState": false,
-          "commentNum": 0,
-          "likeNum": 0,
-          "likeState": false,
-          "images": [
-            "/pic1.png",
-            "/pic2.png"
-          ]
-        },
-        {
-          avatar: 'man',
-          "topicId": 22,
-          "topicName": "save topic api test",
-          "content": "test 123",
-          "createTime": "2022-10-12T05:17:31.000+00:00",
-          "updateTime": "",
-          "pmId": 1,
-          "pmName": "apitestpm",
-          "collectNum": 0,
-          "collectState": false,
-          "commentNum": 0,
-          "likeNum": 1,
-          "likeState": true,
-          "images": []
-        }
-      ],
+      topicInfo: [],
 
-      hotTopics: [
-        {
-          "topicId": 2,
-          "topicName": "The best way to study2",
-          "content": "read mroe, listen more and speak more!",
-          "createTime": "2022-01-20T03:11:11.000+00:00",
-          "updateTime": "",
-          "pmId": 1,
-          "pmName": "",
-          "collectNum": 1,
-          "collectState": false,
-          "commentNum": 3,
-          "likeNum": 1,
-          "likeState": false,
-          "images": [
-            "/pic1.png",
-            "/pic2.png"
-          ]
-        },
-        {
-          "topicId": 1,
-          "topicName": "The best way to study",
-          "content": "read mroe, listen more and speak more!",
-          "createTime": "2022-01-19T02:15:00.000+00:00",
-          "updateTime": "",
-          "pmId": 1,
-          "pmName": "",
-          "collectNum": 1,
-          "collectState": false,
-          "commentNum": 0,
-          "likeNum": 0,
-          "likeState": false,
-          "images": []
-        },
-        {
-          "topicId": 8,
-          "topicName": "save topic test",
-          "content": "test is successful",
-          "createTime": "2022-10-11T01:22:01.000+00:00",
-          "updateTime": "",
-          "pmId": 1,
-          "pmName": "",
-          "collectNum": 0,
-          "collectState": false,
-          "commentNum": 0,
-          "likeNum": 0,
-          "likeState": false,
-          "images": []
-        },
-        {
-          "topicId": 13,
-          "topicName": "save topic api test",
-          "content": "test 123",
-          "createTime": "2022-10-11T01:40:03.000+00:00",
-          "updateTime": "",
-          "pmId": 1,
-          "pmName": "",
-          "collectNum": 0,
-          "collectState": false,
-          "commentNum": 0,
-          "likeNum": 0,
-          "likeState": false,
-          "images": []
-        }
-      ]
+      hotTopics: [],
+
+      city: '北京',
+
+      weather: {
+        aqi: "130",
+        direct: "北风",
+        humidity: "77",
+        info: "阴",
+        power: "2级",
+        temperature: "12",
+        wid: "02",
+      }
     }
   },
   created() {
-
+    let userInfo = localStorage.getItem('userInfo')
+    if(userInfo) {
+      this.isLogin = true
+      this.userInfo = JSON.parse(userInfo)
+      this.getData()
+    } else {
+      this.isLogin = false
+    }
+    this.searchTopic()
+    this.getHot()
+    // this.getWeather()
   },
   methods: {
+    async getWeather() {
+     try {
+       const res = await getCityByIP()
+       if(res.status == 200) {
+         console.log(res.data)
+         let result = res.data.split(' ')
+         const reg = /\"(.*?)\"/
+         result = reg.exec (result[result.length-1]);
+         let city = result[1].split('市')[0]
+         this.city = city
+         weatherInfo({city, key: '7b7a794432d3fa3c89947d7d05b87f4c'}).then(res=>{
+           this.weather = res.result.realtime
+         })
+       }
+     } catch (err) {
+       console.log(err)
+     }
+
+    },
+
+    formatUrl(url) {
+      return getImageHost() + url
+    },
+
+    formatTime(time) {
+      return utc2beijing(time)
+    },
+
     handleLogin() {
       this.showLogin = true
     },
     userCenter() {
       this.$router.push('user-info')
     },
+
     async loginSuccess() {
       const role = localStorage.getItem('role')
       if(role=='pm') {
@@ -238,12 +194,17 @@ export default {
         const res = await getUserInfo()
         if(res.code==20011) {
           this.userInfo = res.data
+          localStorage.setItem('userInfo', JSON.stringify(res.data))
         } else {
           this.$message.error(res.msg)
         }
       } catch (err) {
         console.log(err)
       }
+      await this.getData()
+    },
+
+    async getData() {
       try {
         const res = await getUserData()
         if(res.code==20011) {
@@ -256,19 +217,104 @@ export default {
       }
     },
 
-    async searchTopic() {
-      this.pageNum = 1
+    async searchTopic(loadMore) {
+      if(loadMore!==true) {
+        this.pageNum = 1
+      }
+      const reqModel = {
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+        topicName: this.topicName,
+      }
+      try {
+        const res = await getTopicByName(reqModel)
+        if(res.code === 20011) {
+          this.total = res.data.total
+          if(loadMore===true) {
+            this.topicInfo = this.topicInfo.concat(res.data.list)
+          } else {
+            this.topicInfo = res.data.list
+          }
+        } else {
+          this.$message.error(res.msg)
+        }
+      } catch (err) {
+        console.log(err)
+      }
     },
 
-    async getLatest() {
-
+    loadMore() {
+      this.pageNum += 1
+      if(this.getMode===0) {
+        this.searchTopic(true)
+      } else if(this.getMode===1) {
+        this.getLatest(true)
+      } else if(this.getMode===2) {
+        this.getRecommend(true)
+      }
     },
 
-    async getRecommend() {
+    async getLatest(loadMore) {
+      if(loadMore!==true) {
+        this.pageNum = 1
+      }
+      try {
+        const res = await getLatestTopic({pageNum: this.pageNum, pageSize: this.pageSize})
+        if(res.code === 20011) {
+          if(loadMore!==true) {
+            this.topicInfo = res.data.list
+          } else {
+            this.topicInfo = this.topicInfo.concat(res.data.list)
+          }
+          this.total = res.data.total
+        } else {
+          this.$message.error(res.msg)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
 
+    async getRecommend(loadMore) {
+      if(loadMore!==true) {
+        this.pageNum = 1
+      }
+      try {
+        const res = await getHotTopic({pageNum: this.pageNum, pageSize: this.pageSize})
+        if(res.code === 20011) {
+          this.total = res.data.total
+          if(loadMore!==true) {
+            this.topicInfo = res.data.list
+          } else {
+            this.topicInfo = this.topicInfo.concat(res.data.list)
+          }
+        } else {
+          this.$message.error(res.msg)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
+
+    async getHot() {
+      const reqModel = {
+        pageNum: 1,
+        pageSize: 10
+      }
+      try {
+        const res = await getHotTopic(reqModel)
+        if(res.code === 20011) {
+          this.hotTopics = res.data.list
+        } else {
+          this.$message.error(res.msg)
+        }
+      } catch (err) {
+        console.log(err)
+      }
     },
 
     toDetails(item) {
+      localStorage.setItem('target', JSON.stringify(item))
       this.$router.push('details')
     }
   }
@@ -284,6 +330,24 @@ div{
 }
 .navigation-bg{
   width: 100%;
+}
+.navigation{
+  position: relative;
+}
+.weather {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 99;
+  color: #937e22;
+}
+.web-title {
+  position: absolute;
+  top: 100px;
+  left: 200px;
+  font-size: 56px;
+  color: #bcbb7d;
+  z-index: 99;
 }
 .search-line{
   display: flex;
@@ -312,8 +376,11 @@ div{
 .avatar{
   height: 100px;
   width: 100px;
+  border-radius: 50px;
+  border: 1px solid #e0e0e0;
 }
 .user-name{
+  text-align: center;
   font-size: 20px;
   font-weight: 600;
   margin: 10px 0;
@@ -333,6 +400,14 @@ div{
 .icon{
   width: 45px;
   height: 45px;
+}
+
+.avatar-icon{
+  width: 45px;
+  height: 45px;
+  border-radius: 22.5px;
+  border: 1px solid #e0e0e0;
+  margin-right: 10px;
 }
 
 .third-part{
@@ -358,7 +433,7 @@ div{
   padding: 20px;
 }
 .topic-item:hover{
-  background-color: #e8e8e8;
+  background-color: #f6faff;
 }
 .line1{
   display: flex;
@@ -421,5 +496,22 @@ div{
 .count{
   margin-right: 20px;
   margin-left: 5px;
+}
+.load-more{
+  cursor: pointer;
+  color: #409EFF;
+  text-align: center;
+  margin-top: 10px;
+}
+.un-login{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  height: 100%;
+}
+.un-login>div{
+  width: 100%;
+  text-align: center;
 }
 </style>

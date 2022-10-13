@@ -8,11 +8,27 @@ module.exports = defineConfig({
     hot: true,
     proxy: {
       "/api": {
-        target: "http://localhost:8090", // 需要代理访问的api地址
+        target: "http://1665677410619.free.aeert.com", // 需要代理访问的api地址
         changeOrigin: true, // 允许跨域请求
         pathRewrite: {
           // 重写路径，替换请求地址中的指定路径
           "^/api": "/", // 将请求地址中的/api替换为空，也就是请求地址中不会包含/api/
+        },
+      },
+      "/public": {
+        target: "http://pv.sohu.com/cityjson?ie=utf-8", // 需要代理访问的api地址
+        changeOrigin: true, // 允许跨域请求
+        pathRewrite: {
+          // 重写路径，替换请求地址中的指定路径
+          "^/public": "", // 将请求地址中的/api替换为空，也就是请求地址中不会包含/api/
+        },
+      },
+      "/weather": {
+        target: "http://apis.juhe.cn/simpleWeather/query", // 需要代理访问的api地址
+        changeOrigin: true, // 允许跨域请求
+        pathRewrite: {
+          // 重写路径，替换请求地址中的指定路径
+          "^/weather": "", // 将请求地址中的/api替换为空，也就是请求地址中不会包含/api/
         },
       },
     }
