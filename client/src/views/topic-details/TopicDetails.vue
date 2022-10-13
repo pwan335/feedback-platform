@@ -372,6 +372,9 @@ div{
   display: flex;
   align-items: center;
 }
+.images{
+  margin-top: 20px;
+}
 .avatar{
   height: 80px;
   width: 80px;
@@ -430,6 +433,7 @@ div{
 .comment-content{
   color: gray;
   font-size: 16px;
+  margin-top: 20px;
 }
 .reply-comment{
   padding-left: 70px;
