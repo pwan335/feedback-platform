@@ -1,13 +1,25 @@
 server:
   port: 8080
 
+web:
+  avatar-path: /Users/jiandongchen/Pictures/EasyFeedback/avatar #D:/images/avatar
+  default-avatar: default_ava.png
+  topic-img-path: /Users/jiandongchen/Pictures/EasyFeedback/topic #D:/images/topic
+
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/5619_db?serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/5619_db?serverTimezone=Asia/Shanghai #UTC
     username: root
     password: Qwertyuiop123
     type: com.alibaba.druid.pool.DruidDataSource
+  web:
+    resources:
+      static-locations: file:${web.avatar-path}, file:${web.topic-img-path}
 
 
 mybatis:
@@ -16,7 +28,7 @@ mybatis:
     map-underscore-to-camel-case: true  #开启驼峰命名转换
   mapper-locations:
     - classpath:mapper/*.xml
-  type-aliases-package: com.elec5619.pojo
+  type-aliases-package: com.elec5619.domain
 
 
 

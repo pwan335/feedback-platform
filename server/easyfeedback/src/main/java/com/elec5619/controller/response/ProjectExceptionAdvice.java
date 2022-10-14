@@ -1,5 +1,7 @@
-package com.elec5619.controller;
+package com.elec5619.controller.response;
 
+import com.elec5619.controller.response.Code;
+import com.elec5619.controller.response.Result;
 import com.elec5619.exception.BusinessException;
 import com.elec5619.exception.SystemException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -1,4 +1,4 @@
-package com.elec5619.pojo;
+package com.elec5619.domain.topic;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,11 +10,10 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Topic {
-
     private Long topicId;
     private Long pmId;
     private String topicName;
     private String content;
     private Timestamp createTime;
-
+    private Timestamp updateTime;
 }

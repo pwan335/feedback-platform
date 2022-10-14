@@ -1,13 +1,18 @@
 package com.elec5619.service;
 
-import com.elec5619.pojo.topic.Collect;
-import com.elec5619.pojo.topic.Like;
-import com.elec5619.pojo.topic.TopicDetail;
+import com.elec5619.domain.Page;
+import com.elec5619.domain.SimpleUser;
+import com.elec5619.domain.TopicQuery;
+import com.elec5619.domain.topic.Collect;
+import com.elec5619.domain.topic.Like;
+import com.elec5619.domain.topic.TopicDetail;
+import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,8 +28,19 @@ public class TopicServiceTest {
         String topicName = "study";
         //处理参数
         topicName = "%" + topicName + "%";
+        SimpleUser user = new SimpleUser();
+        user.setEmail("948936249@qq.com");
+        TopicQuery topicQuery = new TopicQuery();
+        topicQuery.setTopicName(topicName);
+        topicQuery.setPageNum(1);
+        topicQuery.setPageSize(2);
+        PageInfo<TopicDetail> topic = topicService.getByTopicName(topicQuery, user);
+        System.out.println(topic);
+    }
 
-        List<TopicDetail> topic = topicService.getByTopicName(topicName);
+    @Test
+    public void testGetByTopicId(){
+        List<TopicDetail> topic = topicService.getByTopicId(2L, null);
         System.out.println(topic);
     }
 
@@ -44,19 +60,30 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void TestGetLatestTopic(){
-        List<TopicDetail> topicList = topicService.getLatestTopic();
+    public void testGetLatestTopic(){
+        SimpleUser user = new SimpleUser();
+        user.setEmail("948936249@qq.com");
+        Page page = new Page();
+        page.setPageNum(1);
+        page.setPageSize(2);
+        PageInfo<TopicDetail> topicList = topicService.getLatestTopic(user, page);
+        System.out.println(topicList);
+//        Timestamp ts = new Timestamp(System.currentTimeMillis());
+//        Date date = ts;
+//        System.out.println(date);
+    }
+
+    @Test
+    public void testGetHotTopic(){
+        Page page = new Page();
+        page.setPageNum(1);
+        page.setPageSize(2);
+        PageInfo<TopicDetail> topicList = topicService.getHotTopic(null, page);
         System.out.println(topicList);
     }
 
     @Test
-    public void TestGetHotTopic(){
-        List<TopicDetail> topicList = topicService.getHotTopic();
-        System.out.println(topicList);
-    }
-
-    @Test
-    public void TestSaveCollect(){
+    public void testSaveCollect(){
         Collect collect = new Collect();
         collect.setTopicId(3L);
         collect.setUid(1L);
@@ -66,12 +93,23 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void TestSaveLike(){
+    public void testSaveLike(){
         Like like = new Like();
-        like.setTopicId(3L);
+        like.setTopicId(1L);
         like.setUid(1L);
         like.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        System.out.println(like);
         boolean state = topicService.saveLike(like);
         System.out.println(state);
     }
+
+//    @Test
+//    public void testUploadImg(){
+//        Long topicId = 2L;
+//        List<String> saveUriList = new ArrayList<>();
+//        saveUriList.add("file1.png");
+//        saveUriList.add("file2.png");
+//        boolean flag = topicService.uploadImg(topicId, saveUriList);
+//        System.out.println(flag);
+//    }
 }

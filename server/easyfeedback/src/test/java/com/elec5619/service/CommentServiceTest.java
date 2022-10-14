@@ -1,17 +1,14 @@
 package com.elec5619.service;
 
-import com.elec5619.pojo.comment.Comment;
-import com.elec5619.pojo.comment.Reply;
-import com.elec5619.pojo.topic.Collect;
-import com.elec5619.pojo.topic.Like;
-import com.elec5619.pojo.topic.TopicDetail;
-import org.apache.ibatis.annotations.Insert;
+import com.elec5619.domain.Page;
+import com.elec5619.domain.comment.Comment;
+import com.elec5619.domain.comment.Reply;
+import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
@@ -23,7 +20,10 @@ public class CommentServiceTest {
 
     @Test
     public void testListComment(){
-        List<Comment> commentList = commentService.listComment(2L);
+        Page page = new Page();
+        page.setPageNum(1);
+        page.setPageSize(2);
+        PageInfo<Comment> commentList = commentService.listComment(3L, page);
         System.out.println(commentList);
     }
 

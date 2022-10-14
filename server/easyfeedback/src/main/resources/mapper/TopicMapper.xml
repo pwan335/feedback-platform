@@ -6,11 +6,11 @@
 <mapper namespace="com.elec5619.dao.TopicMapper">
     <resultMap id="topicQuery" type="TopicDetail">
         <result property="topicId" column="topic_id"/>
-        <result property="topicName" column="topicName"/>
+        <result property="topicName" column="topic_name"/>
         <result property="content" column="content"/>
-        <result property="createTime" column="date"/>
+        <result property="createTime" column="create_time"/>
         <result property="pmId" column="pm_id" />
-        <result property="pmName" column="pmName" />
+        <result property="pmName" column="pm_name" />
         <result property="photo" column="photo"/>
     </resultMap>
 

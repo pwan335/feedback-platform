@@ -1,4 +1,4 @@
-package com.elec5619.controller;
+package com.elec5619.controller.response;
 
 public class Code {
 
