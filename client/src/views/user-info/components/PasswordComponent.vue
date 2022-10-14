@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { updatePassword } from "@/api/user";
+import { updatePassword, updatePmPassword } from "@/api/user";
 import {validPassword} from "@/utils";
 import md5 from 'js-md5'
 
@@ -37,7 +37,14 @@ export default {
   data() {
     return {
       oldPassword: '',
-      newPassword: ''
+      newPassword: '',
+      role: '',
+    }
+  },
+  created() {
+    let info = localStorage.getItem('userInfo')
+    if(info) {
+      this.role = JSON.parse(info).role
     }
   },
   methods: {
@@ -60,18 +67,33 @@ export default {
         "password": md5(this.oldPassword),
         "newPwd": md5(this.newPassword)
       }
-      updatePassword(password).then(res => {
-        if (res.code==20041) {
-          this.$message.success('Change your password successfully!');
-          this.oldPassword = '';
-          this.newPassword = '';
-          this.$emit('logOut')
-        } else {
-          this.$message.error(res.msg);
-        }
-      }, err => {
-        console.log(err);
-      });
+      if(this.role === 'user') {
+        updatePassword(password).then(res => {
+          if (res.code==20041) {
+            this.$message.success('Change your password successfully!');
+            this.oldPassword = '';
+            this.newPassword = '';
+            this.$emit('logOut')
+          } else {
+            this.$message.error(res.msg);
+          }
+        }, err => {
+          console.log(err);
+        });
+      } else {
+        updatePmPassword(password).then(res => {
+          if (res.code==20041) {
+            this.$message.success('Change your password successfully!');
+            this.oldPassword = '';
+            this.newPassword = '';
+            this.$emit('logOut')
+          } else {
+            this.$message.error(res.msg);
+          }
+        }, err => {
+          console.log(err);
+        });
+      }
     }
   }
 }

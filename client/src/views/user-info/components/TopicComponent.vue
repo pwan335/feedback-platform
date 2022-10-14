@@ -10,8 +10,8 @@
     </div>
     <el-form ref="Topic" label-width="140px">
       <el-form-item class="form_item" label="Title">
-        <el-col :span="10">
-          <el-input type="title" v-model="yourTitle"></el-input>
+        <el-col :span="20">
+          <el-input type="title" v-model="yourTitle" placeholder="topic title"></el-input>
         </el-col>
       </el-form-item>
       <el-form-item class="text_item" label="Body">
@@ -19,70 +19,45 @@
           <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="yourBody"></el-input>
         </el-col>
       </el-form-item>
-
-      <el-upload
-          action="#"
-          v-model="yourPictures"
-          list-type="picture-card"
-          :auto-upload="false">
-        <i slot="default" class="el-icon-plus"></i>
-        <div slot="file" slot-scope="{file}">
-          <img
-              class="el-upload-list__item-thumbnail"
-              :src="file.url" alt=""
-          >
-          <span class="el-upload-list__item-actions">
-        <span
-            class="el-upload-list__item-preview"
-            @click="handlePictureCardPreview(file)"
-        >
-          <i class="el-icon-zoom-in"></i>
-        </span>
-        <span
-            v-if="!disabled"
-            class="el-upload-list__item-delete"
-            @click="handleDownload(file)"
-        >
-          <i class="el-icon-download"></i>
-        </span>
-        <span
-            v-if="!disabled"
-            class="el-upload-list__item-delete"
-            @click="handleRemove(file)"
-        >
-          <i class="el-icon-delete"></i>
-        </span>
-      </span>
-        </div>
-      </el-upload>
-      <el-dialog :visible.sync="dialogVisible">
-        <img width="100%" :src="dialogImageUrl" alt="">
-      </el-dialog>
-
-      <el-form-item class="form_btn">
-        <el-button type="primary" @click="postTopic">Submit</el-button>
-      </el-form-item>
-
     </el-form>
+    <el-upload
+        action=""
+        list-type="picture-card"
+        :file-list="fileList"
+        :limit="8"
+        :on-change="changeFile"
+        :on-preview="handlePictureCardPreview"
+        :auto-upload="false">
+      <i class="el-icon-plus"></i>
+    </el-upload>
+    <el-dialog :visible.sync="dialogVisible">
+      <img width="100%" :src="dialogImageUrl" alt="">
+    </el-dialog>
+    <div class="form_btn">
+      <el-button type="primary" @click="postTopic">Submit</el-button>
+    </div>
   </div>
 
 </template>
 
 <script>
-import {addTopic} from "@/api/TopicInfo";
+import { createTopic, createTextTopic } from "@/api/user";
 
 export default {
   name: "TopicComponent",
   data() {
     return{
-      yourTitle: 'Title',
+      yourTitle: '',
       yourBody: '',
-      yourPictures: '',
+      dialogImageUrl: '',
       dialogVisible: false,
-      disabled: false,
+      fileList: []
     };
   },
   methods:{
+    changeFile(file, fileList) {
+      this.fileList = fileList
+    },
     postTopic() {
       if (!this.yourTitle) {
         this.$message.error('Please input your title!')
@@ -93,35 +68,46 @@ export default {
         return;
       }
 
-      const topic = {
-        "topicTitle": this.yourTitle,
-        "topicBody": this.yourBody,
-        "topicPicture": this.yourPictures
+      if(this.fileList.length===0) {
+        createTextTopic({ topicName: this.yourTitle, content: this.yourBody }).then(res => {
+          if (res.code===20021) {
+            this.$message.success('Submit successfully');
+            this.yourTitle = '';
+            this.yourBody = '';
+            this.fileList = []
+          } else {
+            this.$message.error(res.msg);
+          }
+          console.log(res);
+        }, err => {
+          console.log(err);
+        });
+      } else {
+        const formData = new FormData()
+        formData.append('topicName', this.yourTitle)
+        formData.append('content', this.yourBody)
+        this.fileList.forEach(item=>{
+          formData.append('file', item.raw)
+        })
+        createTopic(formData).then(res => {
+          if (res.code===20021) {
+            this.$message.success('Submit successfully');
+            this.yourTitle = '';
+            this.yourBody = '';
+            this.fileList = []
+          } else {
+            this.$message.error(res.msg);
+          }
+          console.log(res);
+        }, err => {
+          console.log(err);
+        });
       }
-      addTopic(topic).then(res => {
-        if (res.success) {
-          this.$message.success('Submit successfully');
-          this.yourTitle = '';
-          this.yourBody = '';
-          this.yourPictures = '';
-        } else {
-          this.$message.error(res.message);
-        }
-        console.log(res);
-      }, err => {
-        console.log(err);
-      });
     },
 
-    handleRemove(file) {
-      console.log(file);
-    },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
-    },
-    handleDownload(file) {
-      console.log(file);
     }
 
  }
@@ -161,8 +147,8 @@ export default {
 }
 
 .form_btn {
-  float: left;
-  margin-left: 0;
+  margin-top: 20px;
+  text-align: center;
   box-sizing: border-box;
 }
 

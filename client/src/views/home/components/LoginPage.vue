@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import {resetPassword, pmLogin, userRegister, userLogin, pmRegister} from "@/api/user";
+import {resetPassword, pmLogin, userRegister, userLogin, pmRegister, resetPmPassword, getPmInfo} from "@/api/user";
 import md5 from 'js-md5'
 import {validPassword} from "@/utils";
 
@@ -79,8 +79,6 @@ export default {
       reNewPas:'',
       reConPas:'',
       verEmail:''
-
-
     }
   },
   computed: {
@@ -149,8 +147,15 @@ export default {
           if(res.code==20011) {
             localStorage.setItem('token', res.data.token)
             localStorage.setItem('role', 'pm')
-            this.$emit('loginSuccess')
             this.handleClose()
+            let res2 = await getPmInfo()
+            if(res2.code==20011) {
+              this.userInfo = res2.data
+              localStorage.setItem('userInfo', JSON.stringify(res2.data))
+            } else {
+              this.$message.error(res2.msg)
+            }
+            await this.$router.push('user-info')
           } else {
             this.$message.error(res.msg)
           }
@@ -172,15 +177,27 @@ export default {
         inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
         inputErrorMessage: 'Invalid Email'
       }).then(({ value }) => {
-        resetPassword({email: value}).then(res=>{
-          if(res.code === 20041) {
-            this.$message.success('Get new password successfully, please go to your mailbox to check')
-          } else {
-            this.$message.error(res.msg)
-          }
-        }, err=>{
-          console.log(err)
-        })
+        if(!this.isManager) {
+          resetPassword({email: value}).then(res=>{
+            if(res.code === 20041) {
+              this.$message.success('Get new password successfully, please go to your mailbox to check')
+            } else {
+              this.$message.error(res.msg)
+            }
+          }, err=>{
+            console.log(err)
+          })
+        } else {
+          resetPmPassword({email: value}).then(res=>{
+            if(res.code === 20041) {
+              this.$message.success('Get new password successfully, please go to your mailbox to check')
+            } else {
+              this.$message.error(res.msg)
+            }
+          }, err=>{
+            console.log(err)
+          })
+        }
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -253,7 +270,7 @@ export default {
         })
       } else {
         const userInfo= {
-          userName: this.userName,
+          pmName: this.userName,
           company: this.company,
           email: this.newEmail,
           password: md5(this.newPassword)

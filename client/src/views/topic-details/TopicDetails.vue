@@ -168,7 +168,7 @@ export default {
     let info = localStorage.getItem('target')
     if(info) {
       this.itemInfo = JSON.parse(info)
-      this.itemInfo.images=['/a3dffd5eb6a5858c7f235fcef8ab0156.jpeg', '/a3dffd5eb6a5858c7f235fcef8ab0156.jpeg', '/a3dffd5eb6a5858c7f235fcef8ab0156.jpeg']
+      // this.itemInfo.images=['/a3dffd5eb6a5858c7f235fcef8ab0156.jpeg', '/a3dffd5eb6a5858c7f235fcef8ab0156.jpeg', '/a3dffd5eb6a5858c7f235fcef8ab0156.jpeg']
       this.getCommentsList()
     }
     let userInfo = localStorage.getItem('userInfo')

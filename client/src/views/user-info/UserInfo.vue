@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="userInfo-container">
-      <div class="home" @click="backHome">
+      <div class="home" @click="backHome" v-if="userInfo.role=='user'">
         <span class="el-icon-arrow-left"></span>
         <span class="back-text">home</span>
       </div>
@@ -55,7 +55,7 @@ import ManageComponent from "@/views/user-info/components/ManageComponent";
 import TopicComponent from "@/views/user-info/components/TopicComponent";
 import RelativeTopic from "@/views/user-info/components/RelativeTopic";
 import {getImageHost} from "@/utils";
-import { updateAvatar } from "@/api/user";
+import { updateAvatar, updatePmAvatar } from "@/api/user";
 
 export default {
   name: "UserInfo",
@@ -94,18 +94,34 @@ export default {
       }
       let formData = new FormData()
       formData.append('file', this.file.raw)
-      try {
-        const res = await updateAvatar(formData)
-        if(res.code === 20021) {
-          this.$message.success('update successfully')
-          this.userInfo.avatar = res.data
-          localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
-          this.closeDialog()
-        } else {
-          this.$message.error(res.msg)
+      if(this.userInfo.role=='user') {
+        try {
+          const res = await updateAvatar(formData)
+          if(res.code === 20021) {
+            this.$message.success('update successfully')
+            this.userInfo.avatar = res.data
+            localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
+            this.closeDialog()
+          } else {
+            this.$message.error(res.msg)
+          }
+        } catch (err) {
+          console.log(err)
         }
-      } catch (err) {
-        console.log(err)
+      } else if(this.userInfo.role == 'pm') {
+        try {
+          const res = await updatePmAvatar(formData)
+          if(res.code === 20021) {
+            this.$message.success('update successfully')
+            this.userInfo.avatar = res.data
+            localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
+            this.closeDialog()
+          } else {
+            this.$message.error(res.msg)
+          }
+        } catch (err) {
+          console.log(err)
+        }
       }
     },
 

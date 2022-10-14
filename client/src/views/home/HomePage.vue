@@ -157,8 +157,9 @@ export default {
          result = reg.exec (result[result.length-1]);
          let city = result[1].split('市')[0]
          this.city = city
+         const that = this
          weatherInfo({city, key: '7b7a794432d3fa3c89947d7d05b87f4c'}).then(res=>{
-           this.weather = res.result.realtime
+           that.weather = res.data.result.realtime
          })
        }
      } catch (err) {

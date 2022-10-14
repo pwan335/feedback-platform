@@ -97,12 +97,18 @@ export function resetPassword(data) {
 }
 
 
+
+
+
+
+
+
 // pm login
-export function pmLogin(params) {
+export function pmLogin(data) {
     return request({
         url: 'pm/login',
-        method: 'get',
-        params
+        method: 'post',
+        data
     })
 }
 
@@ -121,11 +127,56 @@ export function getPmInfo() {
     })
 }
 
+export function updatePmInfo(data) {
+    return request({
+        url: `/pm/profile`,
+        method: 'put',
+        data
+    })
+}
+
+export function updatePmAvatar(data) {
+    return request({
+        url: `/pm/image/save`,
+        method: 'post',
+        data,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
+
+export function updatePmPassword(data) {
+    return request({
+        url: `/pm/password/change`,
+        method: 'put',
+        data
+    })
+}
+
+export function resetPmPassword(data) {
+    return request({
+        url: `/pm/password/forget`,
+        method: 'post',
+        data
+    })
+}
+
 export function createTopic(data) {
+    return request({
+        url: 'pm/img-topic',
+        method: 'post',
+        data,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
+export function createTextTopic(data) {
     return request({
         url: 'pm/topic',
         method: 'post',
-        data
+        data,
     })
 }
 

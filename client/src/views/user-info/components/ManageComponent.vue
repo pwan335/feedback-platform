@@ -1,57 +1,19 @@
 <template>
   <div>
-    <div class = "manage_topic">
-      <div class="existed_font">
-        <span>Manage your topic here</span>
-      </div>
-    </div>
-
-<!--    prop: according to the query result from backend-->
-
     <el-table
         :data="tableData"
-        style="width: 100%">
-      <el-table-column
-          prop="Title"
-          label="title"
-          width="230">
-      </el-table-column>
-      <el-table-column
-          prop="Status"
-          label="status"
-          width="100">
-      </el-table-column>
-      <el-table-column
-          prop="pv"
-          label="PV"
-          width="100">
-      </el-table-column>
-      <el-table-column
-          prop="stars"
-          label="star"
-          width="100">
-      </el-table-column>
-      <el-table-column
-          prop="Comments"
-          label="comments"
-          width="100">
-      </el-table-column>
-      <el-table-column
-          prop="Likes"
-          label="likes"
-          width="100">
-      </el-table-column>
-      <el-table-column
-          fixed="right"
-          label="operation"
-          width="80">
+        max-height="600"
+        style="width: 100%"
+        @row-click="toDetails"
+    >
+      <el-table-column prop="topicName" label="title" width="230" />
+      <el-table-column prop="createTime" label="createTime" width="200" :formatter="formatTime" />
+      <el-table-column prop="collectNum" label="stars" />
+      <el-table-column prop="commentNum" label="comments"  />
+      <el-table-column prop="likeNum" label="likes" />
+      <el-table-column label="operation">
         <template slot-scope="scope">
-          <el-button
-              @click="delTopic(scope.$index, tableData)"
-              type="text"
-              size="small">
-            delete
-          </el-button>
+          <span class="el-icon-delete del-btn" @click="delTopic(scope.row)"></span>
         </template>
       </el-table-column>
     </el-table>
@@ -59,78 +21,72 @@
 </template>
 
 <script>
-import {getManageInfo} from "@/api/TopicInfo"
-import {deleteTopic} from "@/api/TopicInfo"
+
+import { getTopicDataByPm, deleteTopic } from '@/api/user'
+import { utc2beijing } from "@/utils";
 
 export default {
   name: "ManageComponent",
   data() {
     return {
-      tableData: [{
-          Title: 'Title',
-          Status: 'deleted',
-          pv: '500',
-          stars: '345',
-          Likes: '22',
-          Comments: 234
-
-      }]
+      tableData: [{}]
     }
   },
   created() {
     this.getInfo()
   },
   methods:{
-    async getInfo() {
-      let userID = sessionStorage.getItem("userID") //todo: Get current user ID
-      let getManage = {
-        "userID": userID
+    formatTime(row, column, value) {
+      if(value) {
+        return utc2beijing(value)
       }
-      this.loading = true;
-      getManageInfo(getManage).then(res => {
-        console.log(res.data, 'manageInfo');
-        this.tableData = res.data.data; //todo: not tested yet
-        this.total = res.data.total;
-        this.loading = false;
-      })
-      this.loading = false;
     },
 
-    delTopic(index, rows) {
+    toDetails(row, column) {
+      if(column.label!=='operation') {
+        localStorage.setItem('target', JSON.stringify(row))
+        this.$router.push('details')
+      }
+    },
+
+    async getInfo() {
+      try {
+        const res = await getTopicDataByPm()
+        if(res.code === 20011) {
+          this.tableData = res.data
+        } else {
+          this.$message.error(res.msg)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
+
+    delTopic(item) {
       this.$confirm('This operation will delete your topic, are you sure?', 'warning', {
         confirmButtonText: 'Yes',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
-        let topicID = rows.at(index).data //todo: get topic ID
-        let deltopic = {
-          "TopicID": topicID
-        }
-        deleteTopic(deltopic).then(res => {
-          if (res.success) {
+        let topicID = item.topicId
+        deleteTopic({ id: topicID }).then(res => {
+          if (res.code === 20031) {
             this.$message.success('Delete successfully');
+            this.getInfo()
           } else {
-            this.$message.error(res.message);
+            this.$message.error(res.msg);
           }
-          console.log(res);
         }, err => {
           console.log(err);
         });
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: 'Cancel delete'
-        });
-      });
-
-
-
-
+      }).catch(() => {});
     }
   }
 }
 </script>
 
 <style scoped>
-
+.del-btn{
+  color: #f5614c;
+}
 </style>
