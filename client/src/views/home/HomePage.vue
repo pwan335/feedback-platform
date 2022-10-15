@@ -15,9 +15,9 @@
           <el-input v-model="topicName" clearable />
           <el-button type="primary" @click="searchTopic">Search</el-button>
         </div>
-        <div class="top-btn" v-show="isLogin">
-          <el-button type="primary" size="mini" @click="getLatest">Latest</el-button>
-          <el-button type="primary" size="mini" @click="getRecommend">Recommend</el-button>
+        <div class="top-btn">
+          <el-button type="primary" plain size="mini" @click="getLatest">Latest</el-button>
+          <el-button type="primary" plain size="mini" @click="getRecommend">Recommend</el-button>
         </div>
         <div class="topic-item" v-for="(item, index) in topicInfo" :key="index">
           <div class="line1">
@@ -484,6 +484,8 @@ div{
 .top-btn {
   height: 50px;
   line-height: 50px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 .icons{
   margin-top: 10px;
