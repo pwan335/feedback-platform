@@ -51,9 +51,9 @@
         </div>
         <div class="reply-comment">
           <div class="reply-item" v-for="(reply, indicate) in item.replyList" :key="indicate">
-            <div v-if="reply.toUname==item.userName">{{reply.content}}</div>
+            <div v-if="reply.toUname==item.userName"><span style="color: #000">{{reply.fromUname}}</span>: {{reply.content}}</div>
             <div v-else>
-              <span class="form-user">{{reply.fromUname}}</span>  Reply to <span class="to-user">@ {{reply.toUname}}: </span> {{reply.content}}
+              <span class="form-user">{{reply.fromUname}}</span><span class="to-user">@ {{reply.toUname}}: </span> {{reply.content}}
             </div>
             <div class="reply-time">
               {{formatTime(reply.createTime)}}
@@ -441,7 +441,7 @@ div{
 }
 .form-user{
   display: inline-block;
-  margin-right: 20px;
+  margin-right: 4px;
   color: #000;
 }
 .to-user{

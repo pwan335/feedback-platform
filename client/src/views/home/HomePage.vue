@@ -144,7 +144,7 @@ export default {
     }
     this.searchTopic()
     this.getHot()
-    // this.getWeather()
+    this.getWeather()
   },
   methods: {
     async getWeather() {
