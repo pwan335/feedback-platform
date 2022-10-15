@@ -43,6 +43,9 @@ public class PmServiceImpl implements PmService {
             String pmAvatar = "/" + pmMapper.getAvatar(topicDetail.getPmId());
             topicDetail.setPmAvatar(pmAvatar);
             topicDetail.setPmName(pmMapper.getById(topicDetail.getPmId()).getPmName());
+//            topicDetail.setCollectNum(topicMapper.getCollectNumByTopicId(topicId));
+//            topicDetail.setLikeNum(topicMapper.getLikeNumByTopicId(topicId));
+//            topicDetail.setCommentNum(topicMapper.getCommentNum(topicId));
             topicDetail.setCollectNum(pmMapper.getCollectNumByTopic(topicId));
             topicDetail.setLikeNum(pmMapper.getLikeNumByTopic(topicId));
             topicDetail.setCommentNum(pmMapper.getCommentNumByTopic(topicId));

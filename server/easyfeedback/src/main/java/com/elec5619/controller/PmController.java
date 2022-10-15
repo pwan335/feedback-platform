@@ -59,10 +59,10 @@ public class PmController {
                 e.printStackTrace();
             }
         }else{
-            return new Result(Code.SAVE_ERR, flag, "该邮箱已被注册");
+            return new Result(Code.SAVE_ERR, flag, "The email has been registered");
         }
         Integer code = flag ? Code.SAVE_OK : Code.SAVE_ERR;
-        String msg = flag ? "用户注册成功，请前往邮箱验证" : "用户注册失败，用户名或邮箱已存在";
+        String msg = flag ? "User registration is successful, please go to email verification" : "User registration failed, username or mailbox already exists";
 
         return new Result(code, flag, msg);
     }
@@ -71,7 +71,7 @@ public class PmController {
     public Result activateByEmail(@PathVariable String pmName){
         boolean flag = pmService.updateByName(pmName);
         Integer code = flag ? Code.UPDATE_OK : Code.UPDATE_ERR;
-        String msg = flag ? "用户激活成功，请前往登陆" : "用户激活失败";
+        String msg = flag ? "User activation is successful, please go to login" : "User activation failed";
         return new Result(code, flag, msg);
     }
 
@@ -88,7 +88,7 @@ public class PmController {
 
         boolean flag = pmService.validPmLogin(user);
         Integer code = flag ? Code.GET_OK : Code.GET_ERR;
-        String msg = flag ? "PM登陆成功" : "用户邮箱地址或者密码错误";
+        String msg = flag ? "PM login succeeded" : "Incorrect user email address or password";
         if (flag){
             String token = TokenUtils.sign(user);
             HashMap<String,Object> hs=new HashMap<>();
@@ -104,7 +104,7 @@ public class PmController {
     public Result forgetPwd(HttpServletRequest request, @RequestBody AuthPmDto pmDto) throws IOException {
         boolean flag = pmService.forgetPwd(pmDto);
         Integer code = flag ? Code.UPDATE_OK : Code.UPDATE_ERR;
-        String msg = flag ? "获取新密码成功，请前往邮箱获取并验证" : "获取失败，请重试！";
+        String msg = flag ? "The new password has been obtained successfully. Please go to the email to obtain and verify it." : "Get failed, please try again!";
         return new Result(code, flag, msg);
     }
 
@@ -126,13 +126,13 @@ public class PmController {
     public Result changePwd(HttpServletRequest request, @RequestBody AuthPmDto pmDto){
         String token = request.getHeader(TokenUtils.TOKEN_HEADER);
         if(token == null){
-            return new Result(Code.GET_ERR,false,"用户未登陆，请登录后再尝试！");
+            return new Result(Code.GET_ERR,false,"The user has not logged in, please log in and try again!");
         }
         SimpleUser user = TokenUtils.parseToken(token);
         pmDto.setEmail(user.getEmail());
         boolean flag = pmService.changePwd(pmDto);
         Integer code = flag ? Code.UPDATE_OK : Code.UPDATE_ERR;
-        String msg = flag ? "修改用户密码成功" : "修改失败，旧密码不正确！";
+        String msg = flag ? "User password modified successfully" : "Failed to modify, the old password is incorrect！";
         return new Result(code, flag, msg);
     }
 
@@ -146,11 +146,11 @@ public class PmController {
             String avatar = "/" + pmDetail.getAvatar();
             pmDetail.setAvatar(avatar);
 //            User userProfile = userService.getProfile(userDetail.getUid());
-            String msg = pmDetail != null ? "查询pm个人信息成功": "信息查询失败，请重试";
+            String msg = pmDetail != null ? "Pm personal information query successful": "Information query failed, please try again";
             Integer code = pmDetail != null ? Code.GET_OK : Code.GET_ERR;
             return new Result(code, pmDetail, msg);
         }
-        return new Result(Code.GET_ERR,null,"pm未登陆，请登录后再尝试！");
+        return new Result(Code.GET_ERR,null,"Pm is not logged in, please log in and try again!");
     }
 
     @PutMapping("/profile")
@@ -162,11 +162,11 @@ public class PmController {
             newPm.setPmId(pmDetail.getPmId());
             newPm.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             boolean flag = pmService.updateProfile(newPm);
-            String msg = flag ? "修改pm个人信息成功": "数据修改失败，请重试";
+            String msg = flag ? "Successful modification of pm personal information": "Data modification failed. Please try again";
             Integer code = flag ? Code.UPDATE_OK : Code.UPDATE_ERR;
             return new Result(code, flag, msg);
         }
-        return new Result(Code.UPDATE_ERR,null,"pm未登陆，请登录后再尝试！");
+        return new Result(Code.UPDATE_ERR,null,"Pm is not logged in, please log in and try again!");
     }
 
 //    @PostMapping("/topic")
@@ -227,7 +227,7 @@ public class PmController {
         System.out.println("!23123");
         boolean flag = true;
         if (token == null){
-            return new Result(Code.SAVE_ERR,false,"pm未登陆，请登录后再尝试！");
+            return new Result(Code.SAVE_ERR,false,"Pm is not logged in, please log in and try again!");
         }
 
 
@@ -243,12 +243,12 @@ public class PmController {
         Long topicId = pmService.saveTopic(topic);
         if (topicId <= 0){
             flag = false;
-            String msg = flag ? "pm创建topic成功" : "pm创建topic失败，请重试123";
+            String msg = flag ? "Pm successfully created topic" : "Pm failed to create topic. Please try again";
             return new Result(flag ? Code.SAVE_OK:Code.SAVE_ERR,flag,msg);
         }
         List<String> visibleUriList = topicService.uploadImg(topicId, files);
         Integer code = visibleUriList != null ? Code.SAVE_OK : Code.SAVE_ERR;
-        String msg = visibleUriList != null ? "pm创建topic成功" : "pm创建topic失败，请重试";
+        String msg = visibleUriList != null ? "Pm successfully created topic" : "Pm failed to create topic. Please try again";
         return new Result(code, visibleUriList, msg);
     }
 
@@ -256,7 +256,7 @@ public class PmController {
     public Result createNoImgTopic(HttpServletRequest request, @RequestBody Topic topic) throws IOException{
         String token = request.getHeader(TokenUtils.TOKEN_HEADER);
         if (token == null){
-            return new Result(Code.SAVE_ERR,false,"pm未登陆，请登录后再尝试！");
+            return new Result(Code.SAVE_ERR,false,"Pm has not logged in, please log in and try again!");
         }
 
         SimpleUser pm = TokenUtils.parseToken(token);
@@ -265,7 +265,7 @@ public class PmController {
         topic.setCreateTime(new Timestamp(System.currentTimeMillis()));
 
         boolean flag = pmService.saveTopic(topic) > 0;
-        String msg = flag ? "pm创建topic成功" : "pm创建topic失败，请重试123";
+        String msg = flag ? "Pm created topic successfully" : "Pm failed to create topic. Please try again";
         Integer code = flag ? Code.SAVE_OK : Code.SAVE_ERR;
         return new Result(code, flag, msg);
     }
@@ -276,11 +276,11 @@ public class PmController {
         String token = request.getHeader(TokenUtils.TOKEN_HEADER);
         if (token != null){
             boolean flag = pmService.deleteTopic(topicId);
-            String msg = flag ? "pm删除topic成功" : "pm删除topic失败，请重试";
+            String msg = flag ? "Pm deleted topic successfully" : "Pm failed to create topic. Please try again";
             return new Result(flag ? Code.DELETE_OK:Code.DELETE_ERR,flag,msg);
 
         }
-        return new Result(Code.DELETE_ERR,false,"pm未登陆，请登录后再尝试！");
+        return new Result(Code.DELETE_ERR,false,"Pm has not logged in, please log in and try again!");
     }
 
     @GetMapping("/topic/data")
@@ -290,18 +290,18 @@ public class PmController {
             SimpleUser pm = TokenUtils.parseToken(token);
             ProductManager pmDetail = pmService.getPmByEmail(pm.getEmail());
             List<PmTopic> pmTopicList = pmService.getTopicDataByPm(pmDetail.getPmId());
-            String msg = pmTopicList != null ? "获取pm话题数据成功": "数据查询失败，请重试";
+            String msg = pmTopicList != null ? "Get pm topic data successfully": "Data query failed, please try again";
             Integer code = pmTopicList != null ? Code.GET_OK : Code.GET_ERR;
             return new Result(code, pmTopicList, msg);
         }
-        return new Result(Code.GET_ERR,null,"pm未登陆，请登录后再尝试！");
+        return new Result(Code.GET_ERR,null,"Pm has not logged in, please log in and try again!");
     }
 
     @PostMapping("/image/save")
     public Result uploadAvatar(@RequestPart("file") MultipartFile file, HttpServletRequest request) throws IOException {
         String token = request.getHeader(TokenUtils.TOKEN_HEADER);
         if(token == null){
-            return new Result(Code.SAVE_ERR,false,"pm未登陆，请登录后再尝试！");
+            return new Result(Code.SAVE_ERR,false,"Pm has not logged in, please log in and try again!");
         }
         SimpleUser user = TokenUtils.parseToken(token);
         String fileName = file.getOriginalFilename(); //获取文件原名
@@ -317,10 +317,10 @@ public class PmController {
         try {
             file.transferTo(saveFile);
             pmService.saveAvatar(user, fileName);
-            return new Result(Code.SAVE_OK,visibleUri,"用户上传头像成功");
+            return new Result(Code.SAVE_OK,visibleUri,"uploaded avatar successfully");
         }catch (IOException e){
             e.printStackTrace();
-            return new Result(Code.SAVE_ERR,false,"用户上传头像失败");
+            return new Result(Code.SAVE_ERR,false,"Failed to upload avatar");
         }
     }
 

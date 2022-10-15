@@ -20,7 +20,7 @@
              (select count(*) as reply
                 from tbl_reply
                 where comment_id in
-                    (select comment_id
+                    (select id
                     from tbl_comment
                     where topic_id = #{topicId})) rep
     </select>

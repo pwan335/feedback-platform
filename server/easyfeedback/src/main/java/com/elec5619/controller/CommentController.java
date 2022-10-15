@@ -40,7 +40,7 @@ public class CommentController {
         page.setPageSize(pageSize);
         PageInfo<Comment> commentList = commentService.listComment(topicId, page);
         Integer code = commentList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = commentList != null ? "根据话题id搜索评论成功" : "数据查询失败，请重试！";
+        String msg = commentList != null ? "Search for comments based on topic id successfully" : "Data query failed, please try again!";
         return new Result(code, commentList, msg);
     }
 
@@ -61,10 +61,10 @@ public class CommentController {
             }
             comment.setCreateTime(new Timestamp(System.currentTimeMillis()));
             boolean flag = commentService.saveTopComment(comment);
-            String msg = "用户评论成功";
+            String msg = "User comments successful";
             return new Result(flag ? Code.SAVE_OK:Code.SAVE_ERR,flag,msg);
         }
-        return new Result(Code.SAVE_ERR,false,"用户未登陆，请登录后再尝试！");
+        return new Result(Code.SAVE_ERR,false,"The user has not logged in, please log in and try again!");
     }
 
     @PostMapping("/reply")
@@ -84,10 +84,10 @@ public class CommentController {
             reply.setFromRole(user.getRole());
             reply.setCreateTime(new Timestamp(System.currentTimeMillis()));
             boolean flag = commentService.saveTreeComment(reply);
-            String msg = "用户回复评论成功";
+            String msg = "The user replied to the comment successfully";
             return new Result(flag ? Code.SAVE_OK:Code.SAVE_ERR,flag,msg);
         }
-        return new Result(Code.SAVE_ERR,false,"用户未登陆，请登录后再尝试！");
+        return new Result(Code.SAVE_ERR,false,"The user has not logged in, please log in and try again!");
     }
 
     // 删除评论、修改评论
@@ -103,13 +103,13 @@ public class CommentController {
             if("user".equals(user.getRole())){
                 User userDetail = userService.getUserByEmail(user.getEmail());
                 flag = commentService.delectTopComment(id, user.getRole(), userDetail.getUid());
-                msg = flag ? "用户删除评论成功" : "用户删除评论失败";
+                msg = flag ? "User deleted comment successfully" : "User failed to delete comment";
             }else{
-                System.out.println("增加pm可以删除任何评论功能");
+                System.out.println("Add pm to delete any comment function");
             }
             return new Result(flag ? Code.DELETE_OK:Code.DELETE_ERR,flag,msg);
         }
-        return new Result(Code.DELETE_ERR,false,"用户未登陆，请登录后再尝试！");
+        return new Result(Code.DELETE_ERR,false,"The user has not logged in, please log in and try again!");
     }
 
     @DeleteMapping("/tree-comment/{id}")
@@ -122,12 +122,12 @@ public class CommentController {
             if("user".equals(user.getRole())){
                 User userDetail = userService.getUserByEmail(user.getEmail());
                 flag = commentService.delectTreeComment(id, user.getRole(), userDetail.getUid());
-                msg = flag ? "用户删除评论成功" : "用户删除评论失败";
+                msg = flag ? "User deleted comment successfully" : "User failed to delete comment";
             }else{
-                System.out.println("增加pm可以删除任何评论功能");
+                System.out.println("Add pm to delete any comment function");
             }
             return new Result(flag ? Code.DELETE_OK:Code.DELETE_ERR,flag,msg);
         }
-        return new Result(Code.DELETE_ERR,false,"用户未登陆，请登录后再尝试！");
+        return new Result(Code.DELETE_ERR,false,"The user has not logged in, please log in and try again!");
     }
 }

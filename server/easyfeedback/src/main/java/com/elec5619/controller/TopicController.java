@@ -59,7 +59,7 @@ public class TopicController {
             topicList = topicService.getByTopicName(topicQuery, null);
         }
         Integer code = topicList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = topicList != null ? "根据话题名搜索成功" : "数据查询失败，请重试！";
+        String msg = topicList != null ? "Search successfully based on topic name" : "Data query failed, please try again!";
         return new Result(code, topicList, msg);
     }
 
@@ -78,7 +78,7 @@ public class TopicController {
             topicList = topicService.getByTopicId(topicId, null);
         }
         Integer code = topicList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = topicList != null ? "根据话题id搜索成功" : "数据查询失败，请重试！";
+        String msg = topicList != null ? "Search successfully based on topic id" : "Data query failed, please try again!";
         return new Result(code, topicList, msg);
     }
 
@@ -100,7 +100,7 @@ public class TopicController {
             topicList = topicService.getLatestTopic(null, page);
         }
         Integer code = topicList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = topicList != null ? "根据时间获取最新话题成功" : "数据查询失败，请重试！";
+        String msg = topicList != null ? "Get the latest topic according to time success" : "Data query failed, please try again!";
         return new Result(code, topicList, msg);
     }
 
@@ -124,7 +124,7 @@ public class TopicController {
             topicList = topicService.getHotTopic(null, page);
         }
         Integer code = topicList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = topicList != null ? "根据时间获取热门话题成功" : "数据查询失败，请重试！";
+        String msg = topicList != null ? "Get hot topics successfully" : "Data query failed, please try again!";
         return new Result(code, topicList, msg);
     }
 
@@ -134,15 +134,15 @@ public class TopicController {
         if (token != null){
             SimpleUser user = TokenUtils.parseToken(token);
             if(!"user".equals(user.getRole())){
-                return new Result(Code.SAVE_ERR,false,"pm收藏出现异常！");
+                return new Result(Code.SAVE_ERR,false,"There is an exception in pm collection!");
             }
             collect.setUid(userService.getUidByEmail(user.getEmail()));
             collect.setCreateTime(new Timestamp(System.currentTimeMillis()));
             boolean flag = topicService.saveCollect(collect);
-            String msg = "用户收藏成功";
+            String msg = "User collection successful";
             return new Result(flag ? Code.SAVE_OK:Code.SAVE_ERR,flag,msg);
         }
-        return new Result(Code.SAVE_ERR,false,"用户未登陆，请登录后在尝试！");
+        return new Result(Code.SAVE_ERR,false,"The user has not logged in, please log in and try again!");
     }
 
     @PostMapping("/like")
@@ -151,15 +151,15 @@ public class TopicController {
         if (token != null){
             SimpleUser user = TokenUtils.parseToken(token);
             if(!"user".equals(user.getRole())){
-                return new Result(Code.SAVE_ERR,false,"pm点赞出现异常！");
+                return new Result(Code.SAVE_ERR,false,"There is an exception in pm likes!");
             }
             like.setUid(userService.getUidByEmail(user.getEmail()));
             like.setCreateTime(new Timestamp(System.currentTimeMillis()));
             boolean flag = topicService.saveLike(like);
-            String msg = "用户点赞成功";
+            String msg = "User likes successfully";
             return new Result(flag ? Code.SAVE_OK:Code.SAVE_ERR,flag,msg);
         }
-        return new Result(Code.SAVE_ERR,false,"用户未登陆，请登录后在尝试！");
+        return new Result(Code.SAVE_ERR,false,"The user has not logged in, please log in and try again!");
     }
 
     @DeleteMapping("/collect")
@@ -168,14 +168,14 @@ public class TopicController {
         if (token != null){
             SimpleUser user = TokenUtils.parseToken(token);
             if(!"user".equals(user.getRole())){
-                return new Result(Code.DELETE_ERR,false,"pm取消收藏现异常！");
+                return new Result(Code.DELETE_ERR,false,"Pm Cancel Collection Exception!");
             }
             collect.setUid(userService.getUidByEmail(user.getEmail()));
             boolean flag = topicService.delectCollect(collect);
-            String msg = "用户取消收藏成功";
+            String msg = "The user canceled the collection successfully.";
             return new Result(flag ? Code.DELETE_OK:Code.DELETE_ERR,flag,msg);
         }
-        return new Result(Code.DELETE_ERR,false,"用户未登陆，请登录后在尝试！");
+        return new Result(Code.DELETE_ERR,false,"The user has not logged in, please log in and try again!");
     }
 
     @DeleteMapping("/like")
@@ -184,14 +184,14 @@ public class TopicController {
         if (token != null){
             SimpleUser user = TokenUtils.parseToken(token);
             if(!"user".equals(user.getRole())){
-                return new Result(Code.DELETE_ERR,false,"pm取消点赞现异常！");
+                return new Result(Code.DELETE_ERR,false,"It is unusual for pm to cancel likes!");
             }
             like.setUid(userService.getUidByEmail(user.getEmail()));
             boolean flag = topicService.delectLike(like);
-            String msg = "用户取消点赞成功";
+            String msg = "The user canceled the like successfully";
             return new Result(flag ? Code.DELETE_OK:Code.DELETE_ERR,flag,msg);
         }
-        return new Result(Code.DELETE_ERR,false,"用户未登陆，请登录后在尝试！");
+        return new Result(Code.DELETE_ERR,false,"The user has not logged in, please log in and try again!");
     }
 
     @GetMapping("/user/data")
@@ -200,14 +200,14 @@ public class TopicController {
         if (token != null){
             SimpleUser user = TokenUtils.parseToken(token);
             if(!"user".equals(user.getRole())){
-                return new Result(Code.GET_ERR,false,"获取用户数据异常");
+                return new Result(Code.GET_ERR,false,"Get user data exception");
             }
             UserData userData = topicService.getUserData(userService.getUidByEmail(user.getEmail()), user.getRole());
             Integer code = userData != null ? Code.GET_OK : Code.GET_ERR;
-            String msg = userData != null ? "获取用户数据成功" : "获取用户数据失败";
+            String msg = userData != null ? "Successful acquisition of user data" : "Failed to get user data";
             return new Result(code, userData, msg);
         }
-        return new Result(Code.GET_ERR,false,"用户未登陆，请登录后再尝试！");
+        return new Result(Code.GET_ERR,false,"The user has not logged in, please log in and try again!");
     }
 
     @PostMapping("/image/save")
@@ -215,7 +215,7 @@ public class TopicController {
         String token = request.getHeader(TokenUtils.TOKEN_HEADER);
         Long topicId1 = Long.parseLong(topicId);
         if (token == null) {
-            return new Result(Code.SAVE_ERR, false, "用户未登陆，请登录后再尝试！");
+            return new Result(Code.SAVE_ERR, false, "The user has not logged in, please log in and try again!");
         }
         SimpleUser user = TokenUtils.parseToken(token);
         List<String> visibleUriList = new ArrayList<>();
@@ -238,12 +238,12 @@ public class TopicController {
                 saveUriList.add(fileName);
             } catch (IOException e) {
                 e.printStackTrace();
-                return new Result(Code.SAVE_ERR, false, "用户上传头像失败");
+                return new Result(Code.SAVE_ERR, false, "Failed to upload avatar");
             }
         }
 
         Integer flag = topicService.uploadImg(topicId1, files) != null? Code.SAVE_OK : Code.SAVE_ERR;
-        String msg = flag > 0 ? "用户上传头像成功" : "用户上传头像失败";
+        String msg = flag > 0 ? "Uploaded avatar successfully" : "Failed to upload avatar";
         return new Result(flag, visibleUriList, msg);
     }
 

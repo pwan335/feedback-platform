@@ -44,7 +44,7 @@ public class UserController {
     public Result getById(@PathVariable Long id){
         User user = userService.getById(id);
         Integer code = user != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = user != null ? "获取用户成功" : "数据查询失败，请重试！";
+        String msg = user != null ? "Get user success" : "Data query failed, please try again!";
         return new Result(code, user, msg);
     }
 
@@ -58,11 +58,11 @@ public class UserController {
             String avatar = "/" + userDetail.getAvatar();
             userDetail.setAvatar(avatar);
 //            User userProfile = userService.getProfile(userDetail.getUid());
-            String msg = userDetail != null ? "查询用户个人信息成功": "信息查询失败，请重试";
+            String msg = userDetail != null ? "Query the user's personal information successfully": "Information query failed, please try again";
             Integer code = userDetail != null ? Code.GET_OK : Code.GET_ERR;
             return new Result(code, userDetail, msg);
         }
-        return new Result(Code.GET_ERR,null,"用户未登陆，请登录后再尝试！");
+        return new Result(Code.GET_ERR,null,"The user has not logged in, please log in and try again!");
     }
 
     @PutMapping("/profile")
@@ -74,11 +74,11 @@ public class UserController {
             newUser.setUid(userDetail.getUid());
             newUser.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             boolean flag = userService.updateProfile(newUser);
-            String msg = flag ? "修改用户个人信息成功": "信息修改失败，请重试";
+            String msg = flag ? "Successful modification of user's personal information": "Failed to modify the information, please try again";
             Integer code = flag ? Code.UPDATE_OK : Code.UPDATE_ERR;
             return new Result(code, flag, msg);
         }
-        return new Result(Code.UPDATE_ERR,null,"用户未登陆，请登录后再尝试！");
+        return new Result(Code.UPDATE_ERR,null,"The user has not logged in, please log in and try again!");
     }
 
     @PostMapping("/login")
@@ -94,7 +94,7 @@ public class UserController {
 
         boolean flag = userService.validUserLogin(user);
         Integer code = flag ? Code.GET_OK : Code.GET_ERR;
-        String msg = flag ? "用户登陆成功" : "用户邮箱地址或者密码错误";
+        String msg = flag ? "User logged in successfully" : "Incorrect user email address or password";
         if (flag){
             String token = TokenUtils.sign(user);
             HashMap<String,Object> hs=new HashMap<>();
@@ -123,13 +123,13 @@ public class UserController {
     public Result changePwd(HttpServletRequest request, @RequestBody AuthUserDto userDto){
         String token = request.getHeader(TokenUtils.TOKEN_HEADER);
         if(token == null){
-            return new Result(Code.GET_ERR,false,"用户未登陆，请登录后再尝试！");
+            return new Result(Code.GET_ERR,false,"The user has not logged in, please log in and try again!");
         }
         SimpleUser user = TokenUtils.parseToken(token);
         userDto.setEmail(user.getEmail());
         boolean flag = userService.changePwd(userDto);
         Integer code = flag ? Code.UPDATE_OK : Code.UPDATE_ERR;
-        String msg = flag ? "修改用户密码成功" : "修改失败，旧密码不正确！";
+        String msg = flag ? "User password modified successfully" : "Failed to modify, the old password is incorrect!";
         return new Result(code, flag, msg);
     }
 
@@ -138,7 +138,7 @@ public class UserController {
     public Result forgetPwd(HttpServletRequest request, @RequestBody AuthUserDto userDto) throws IOException {
         boolean flag = userService.forgetPwd(userDto);
         Integer code = flag ? Code.UPDATE_OK : Code.UPDATE_ERR;
-        String msg = flag ? "获取新密码成功，请前往邮箱获取并验证" : "获取失败，请重试！";
+        String msg = flag ? "The new password has been obtained successfully. Please go to the mailbox to obtain and verify it." : "Failed to get, please try again!";
         return new Result(code, flag, msg);
     }
 
@@ -151,10 +151,10 @@ public class UserController {
             SimpleUser user = TokenUtils.parseToken(token);
             topicList = userService.getTopicByCollected(user);
         }else{
-            return new Result(Code.GET_ERR,false,"用户未登陆，请登录后再尝试！");
+            return new Result(Code.GET_ERR,false,"The user has not logged in, please log in and try again!");
         }
         Integer code = topicList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = topicList != null ? "获取用户收藏话题成功" : "数据查询失败，请重试！";
+        String msg = topicList != null ? "Get the user's favorite topic successfully" : "Data query failed, please try again!";
         return new Result(code, topicList, msg);
     }
 
@@ -166,10 +166,10 @@ public class UserController {
             SimpleUser user = TokenUtils.parseToken(token);
             topicList = userService.getTopicByLiked(user);
         }else{
-            return new Result(Code.GET_ERR,false,"用户未登陆，请登录后再尝试！");
+            return new Result(Code.GET_ERR,false,"The user has not logged in, please log in and try again!");
         }
         Integer code = topicList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = topicList != null ? "获取用户点赞话题成功" : "数据查询失败，请重试！";
+        String msg = topicList != null ? "Successful topic of getting likes from users" : "Data query failed, please try again!";
         return new Result(code, topicList, msg);
     }
 
@@ -181,10 +181,10 @@ public class UserController {
             SimpleUser user = TokenUtils.parseToken(token);
             topicList = userService.getTopicByComment(user);
         }else{
-            return new Result(Code.GET_ERR,false,"用户未登陆，请登录后再尝试！");
+            return new Result(Code.GET_ERR,false,"The user has not logged in, please log in and try again!");
         }
         Integer code = topicList != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = topicList != null ? "获取用户评论话题成功" : "数据查询失败，请重试！";
+        String msg = topicList != null ? "Get the topic of user comments successfully" : "Data query failed, please try again!";
         return new Result(code, topicList, msg);
     }
 
@@ -197,10 +197,10 @@ public class UserController {
         if(flag){
             SendCloudAPI.sendEmail(userDto, null);
         }else{
-            return new Result(Code.SAVE_ERR, flag, "该邮箱已被注册");
+            return new Result(Code.SAVE_ERR, flag, "This email has been registered");
         }
         Integer code = flag ? Code.SAVE_OK : Code.SAVE_ERR;
-        String msg = flag ? "用户注册成功，请前往邮箱验证" : "用户注册失败，用户名或邮箱已存在";
+        String msg = flag ? "The user has registered successfully. Please go to the mailbox to verify." : "User registration failed, username or mailbox already exists";
 
         return new Result(code, flag, msg);
     }
@@ -209,7 +209,7 @@ public class UserController {
     public Result activateByEmail(@PathVariable String userName){
         boolean flag = userService.updateByName(userName);
         Integer code = flag ? Code.UPDATE_OK : Code.UPDATE_ERR;
-        String msg = flag ? "用户激活成功，请前往登陆" : "用户激活失败";
+        String msg = flag ? "User activation is successful, please go to login" : "User activation failed";
         return new Result(code, flag, msg);
     }
 
@@ -217,7 +217,7 @@ public class UserController {
     public Result uploadAvatar(@RequestPart("file")MultipartFile file, HttpServletRequest request) throws IOException {
         String token = request.getHeader(TokenUtils.TOKEN_HEADER);
         if(token == null){
-            return new Result(Code.SAVE_ERR,false,"用户未登陆，请登录后再尝试！");
+            return new Result(Code.SAVE_ERR,false,"The user has not logged in, please log in and try again!");
         }
         SimpleUser user = TokenUtils.parseToken(token);
         String fileName = file.getOriginalFilename(); //获取文件原名
@@ -233,10 +233,10 @@ public class UserController {
         try {
             file.transferTo(saveFile);
             userService.saveAvatar(user, fileName);
-            return new Result(Code.SAVE_OK,visibleUri,"用户上传头像成功");
+            return new Result(Code.SAVE_OK,visibleUri,"Upload avatar successfully");
         }catch (IOException e){
             e.printStackTrace();
-            return new Result(Code.SAVE_ERR,false,"用户上传头像失败");
+            return new Result(Code.SAVE_ERR,false,"Failed to upload avatar");
         }
     }
 
