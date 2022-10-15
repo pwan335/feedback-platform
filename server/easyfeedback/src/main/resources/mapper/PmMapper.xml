@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.elec5619.dao.PmMapper">
+
+    <insert id="saveTopic1" parameterType="Topic">
+        insert into tbl_topic (pm_id, topic_name, content, create_time)
+                    values(#{pmId}, #{topicName}, #{content}, #{createTime})
+        <selectKey resultType="java.lang.Integer" keyProperty="topic_id">
+            CALL IDENTITY()
+        </selectKey>
+    </insert>
+    <select id="getCommentNumByTopic" resultType="java.lang.Integer">
+        select sum(comment + reply) as commentNum
+        from (select count(*) as comment
+                from tbl_comment
+                where topic_id = #{topicId}) com,
+             (select count(*) as reply
+                from tbl_reply
+                where comment_id in
+                    (select comment_id
+                    from tbl_comment
+                    where topic_id = #{topicId})) rep
+    </select>
+</mapper>
