@@ -26,6 +26,7 @@
         :file-list="fileList"
         :limit="8"
         :on-change="changeFile"
+        :on-remove="handleRemove"
         :on-preview="handlePictureCardPreview"
         :auto-upload="false">
       <i class="el-icon-plus"></i>
@@ -58,6 +59,11 @@ export default {
     changeFile(file, fileList) {
       this.fileList = fileList
     },
+
+    handleRemove(file, fileList) {
+      this.fileList = fileList
+    },
+
     postTopic() {
       if (!this.yourTitle) {
         this.$message.error('Please input your title!')

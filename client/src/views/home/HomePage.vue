@@ -29,7 +29,7 @@
           </div>
           <div @click="toDetails(item)">
             <div class="topic-title">{{item.topicName}}</div>
-            <div class="topic-content">{{item.content}}</div>
+            <div class="topic-content">{{formatContent(item.content)}}</div>
           </div>
           <div class="icons">
             <el-image v-if="!item.collectState" :src="require('../../assets/home_images/collect0.png')" class="comment-icon" />
@@ -317,6 +317,14 @@ export default {
     toDetails(item) {
       localStorage.setItem('target', JSON.stringify(item))
       this.$router.push('details')
+    },
+
+    formatContent(content) {
+      if(content.length<150) {
+        return content
+      } else {
+        return content.substring(0, 150) + '...'
+      }
     }
   }
 }

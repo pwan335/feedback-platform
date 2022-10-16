@@ -5,10 +5,11 @@ module.exports = defineConfig({
   transpileDependencies: true,
   publicPath: "/",
   devServer: {
+    port: 8081,
     hot: true,
     proxy: {
       "/api": {
-        target: "http://localhost:8080", // 需要代理访问的api地址
+        target: "http://1665894844663.free.aeert.com", // 需要代理访问的api地址
         changeOrigin: true, // 允许跨域请求
         pathRewrite: {
           // 重写路径，替换请求地址中的指定路径
