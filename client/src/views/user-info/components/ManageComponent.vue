@@ -3,15 +3,16 @@
     <el-table
         :data="tableData"
         max-height="600"
-        style="width: 100%"
+        style="width: 100%; column-rule-color: #bbc5d3"
+        :header-cell-style="{ color: '#409EFF' }"
         @row-click="toDetails"
     >
-      <el-table-column prop="topicName" label="title" width="230" />
-      <el-table-column prop="createTime" label="createTime" width="200" :formatter="formatTime" />
-      <el-table-column prop="collectNum" label="stars" />
-      <el-table-column prop="commentNum" label="comments"  />
-      <el-table-column prop="likeNum" label="likes" />
-      <el-table-column label="operation">
+      <el-table-column prop="topicName" label="Title" width="230"/>
+      <el-table-column prop="createTime" label="CreateTime" width="200" :formatter="formatTime"/>
+      <el-table-column prop="collectNum" label="Collects" />
+      <el-table-column prop="commentNum" label="Comments"  />
+      <el-table-column prop="likeNum" label="Likes" />
+      <el-table-column label="Operation">
         <template slot-scope="scope">
           <span class="el-icon-delete del-btn" @click="delTopic(scope.row)"></span>
         </template>
@@ -88,5 +89,8 @@ export default {
 <style scoped>
 .del-btn{
   color: #f5614c;
+}
+.pro-style{
+  color: #1482f0;
 }
 </style>

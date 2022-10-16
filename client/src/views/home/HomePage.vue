@@ -53,7 +53,7 @@
             <el-button @click="handleLogin">click here</el-button>
           </div>
           <div v-else style="position:relative;">
-            <el-button class="edit-btn" type="text" @click="userCenter">user center</el-button>
+            <el-button class="edit-btn" type="text" @click="userCenter">User Center</el-button>
             <div style="text-align: center">
               <el-image :src="formatUrl(userInfo.avatar)" class="avatar" />
             </div>

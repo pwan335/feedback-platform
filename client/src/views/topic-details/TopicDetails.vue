@@ -36,7 +36,10 @@
     </div>
     <el-divider />
     <div class="comment-box">
-      <div class="comment-title">comments</div>
+      <div class="comment-title">
+        <span class="el-icon-chat-dot-square comment-icon"></span>
+        <span>Comment</span>
+      </div>
       <div v-for="(item, index) in commentsList" :key="index">
         <div class="line1">
           <el-image :src="formatUrl(item.userAvatar)" class="avatar" />
@@ -482,9 +485,27 @@ div{
 .back-text{
   color: #409EFF;
 }
-.comment-title{
-  font-size: 24px;
-  font-weight: 700;
+/*.comment-title{*/
+/*  font-size: 24px;*/
+/*  font-weight: 700;*/
+/*  margin: 20px 0;*/
+/*}*/
+
+.comment-title > span {
+  display: inline-block;
+  margin-right: 10px;
+  color: #1482f0;
+
+}
+
+.comment-title {
+  display: flex;
+  align-items: center;
   margin: 20px 0;
+}
+
+.comment-icon {
+  color: #1482f0;
+  font-size: 26px;
 }
 </style>

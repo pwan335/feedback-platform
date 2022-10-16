@@ -15,7 +15,7 @@ export function validStock(stock) {
 }
 
 export function getImageHost() {
-    return 'http://1665763721187.free.aeert.com'
+    return 'http://localhost:8080'
 }
 
 export function utc2beijing(time) {
