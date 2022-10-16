@@ -15,7 +15,7 @@ Object Oriented Application Framework Project
 
   4. Search topic by topic name
 
-  5. Using paging to display the topic list and comments
+  5. Using paging to display the topic list and comments (two levels)
 
      
 
@@ -45,7 +45,7 @@ Object Oriented Application Framework Project
   6. Create topics
   7. Manage topic
   8. View details of the topic
-  9. Communicate with user using comments
+  9. Communicate with users using comments
 
 
 
