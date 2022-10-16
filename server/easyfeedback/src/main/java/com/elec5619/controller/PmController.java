@@ -224,7 +224,7 @@ public class PmController {
     @PostMapping("/img-topic")
     public Result createImgTopic(HttpServletRequest request, @RequestPart("file") MultipartFile[] files, @RequestPart("topicName") String topicName, @RequestPart("content") String content) throws IOException{
         String token = request.getHeader(TokenUtils.TOKEN_HEADER);
-        System.out.println("!23123");
+//        System.out.println("!23123");
         boolean flag = true;
         if (token == null){
             return new Result(Code.SAVE_ERR,false,"Pm is not logged in, please log in and try again!");
@@ -239,7 +239,7 @@ public class PmController {
         ProductManager pmDetail = pmService.getPmByEmail(pm.getEmail());
         topic.setPmId(pmDetail.getPmId());
         topic.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        System.out.println(topic);
+//        System.out.println(topic);
         Long topicId = pmService.saveTopic(topic);
         if (topicId <= 0){
             flag = false;
