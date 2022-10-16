@@ -3,14 +3,49 @@ Object Oriented Application Framework Project
 
 
 
-## Project functionalities
+## Project Functionalities
 
 - Topic
-  - 
-- Client
-  - 
-- Product Manager
-  - 
+
+  1. Show the recommended(hot) topic
+
+  2. Show the latest topic
+
+  3. Show details of the topic (including topic name, content, photos and comments)
+
+  4. Search topic by topic name
+
+  5. Using paging to display the topic list and comments (two levels)
+
+     
+
+- Client (user): 
+
+  1. Register
+  2. Login
+  3. Forget password
+  4. View details of the topic
+  5. Actions with the topic
+     1. Add comment to the topic
+     2. Collect the topic
+     3. Like the topic
+  6. Show the use's profile
+  7. Chang profile (including the user's avatar)
+  8. Change password
+  9. View topics that users have liked, collected and commented on
+
+
+
+- Business(pm)
+  1. Register
+  2. Login
+  3. Forget password
+  4. Chang profile (including the pm's avatar)
+  5. Change password
+  6. Create topics
+  7. Manage topic
+  8. View details of the topic
+  9. Communicate with users using comments
 
 
 
