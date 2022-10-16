@@ -320,10 +320,15 @@ export default {
     },
 
     formatContent(content) {
-      if(content.length<150) {
+      let result = content.split(' ')
+      if(result.length<150) {
         return content
       } else {
-        return content.substring(0, 150) + '...'
+        let temp = ''
+        for(let i=0; i< 100; i++) {
+          temp = temp + result[i] + ' '
+        }
+        return temp + '...'
       }
     }
   }

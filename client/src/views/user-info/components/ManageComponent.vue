@@ -44,7 +44,7 @@ export default {
     },
 
     toDetails(row, column) {
-      if(column.label!=='operation') {
+      if(column.label!=='Operation') {
         localStorage.setItem('target', JSON.stringify(row))
         this.$router.push('details')
       }
