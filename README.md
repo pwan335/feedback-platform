@@ -9,7 +9,7 @@ Object Oriented Application Framework Project
 
   1. Show the recommended(hot) topic
 
-  2. Show the latest topic
+  2. Show the latest topics
 
   3. Show details of the topic (including topic name, content, photos and comments)
 
